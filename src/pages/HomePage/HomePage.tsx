@@ -1,6 +1,11 @@
+import { Outlet } from "react-router" 
+import { MainLayout } from "src/layouts/MainLayout/MainLayout"
+
 export const HomePage = () => {
     return (
-        <div>HALLO</div>
+        <MainLayout>
+            <Outlet />
+        </MainLayout>
     )
 }
 
