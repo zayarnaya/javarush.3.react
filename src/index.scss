@@ -1,0 +1,38 @@
+@import 'assets/styles/fonts';
+
+:root {
+  --breakpoint-l: 1440px;
+  --breakpoint-touch: 1200px;
+  --breakpoint-m: 768px;
+  --breakpoint-s: 360px;
+
+  --primary-blue: #5E4AE3; /**/
+  --primary-blue-10: #5E4AE325;
+  --primary-red: #FF6060; /**/
+  --primary-black: #010400; /**/
+  --secondary-black: #202020;
+  --teal: #7DCFB6;
+  --light-orange: #FBD1A2;
+  --orange: #F79256;
+  --bg-grey: #F5F5F5;
+  --primary-grey: #90A3BF;
+  --darker-grey: #90A3BF7F;
+  --success-green: #31A91D;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  color: var(--primary-black);
+  margin: 0;
+  padding: 0;
+  transition: 0.3s;
+}
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  min-width: 360px;
+}
