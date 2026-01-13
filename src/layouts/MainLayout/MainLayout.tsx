@@ -1,14 +1,10 @@
-import { useCallback, useState, type FC, type ReactNode } from "react";
-import { NavLink } from "react-router";
+import { useCallback, useState, type FC } from "react";
+import { NavLink, Outlet } from "react-router";
 import cn from 'classnames';
 import logo from '@images/logo.svg';
 import './MainLayout.scss';
 
-interface Props {
-    children: ReactNode;
-}
-
-export const MainLayout:FC<Props> = ({children}) => {
+export const MainLayout:FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const handleMenuToggle = useCallback(() => setIsOpen(prev => !prev), []);
     return (
@@ -33,7 +29,7 @@ export const MainLayout:FC<Props> = ({children}) => {
                 </nav>
             </header>
             <main>
-                {children}
+                <Outlet />
             </main>
             <footer>
             </footer>
