@@ -1,6 +1,10 @@
+import { Typography, Button, Flex } from 'antd';
+
 export const HomePage = () => {
     return (
-        <div>HALLO</div>
+        <Flex vertical align='center' justify='center'>
+            
+        </Flex>
     )
 }
 
