@@ -1,6 +1,5 @@
 import { Flex } from "antd";
 import { useCallback, useContext, useMemo } from "react"
-import { ThemeContext } from "src/contexts/ThemeContext"
 import cn from 'classnames'
 import style from './SearchResultsPage.module.scss'
 import { TicketForm } from "src/widgets";
@@ -9,8 +8,7 @@ import { StationsContext } from "src/contexts/StationsContext";
 import { parseDate } from "./helpers";
 
 export const SearchResultsPage = () => {
-    const {setTheme} = useContext(ThemeContext);
-    setTheme('light');
+
     const [searchParams, setSearchParams] = useSearchParams();
 
     const initialValues = Object.fromEntries(searchParams.entries());

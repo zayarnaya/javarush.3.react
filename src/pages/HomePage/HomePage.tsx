@@ -1,6 +1,5 @@
 import { Flex } from 'antd';
 import { useCallback, useContext, useMemo } from 'react';
-import { ThemeContext } from 'src/contexts/ThemeContext';
 import style from './HomePage.module.scss'
 import './override.styles.scss'
 import { useNavigate } from 'react-router';
@@ -9,10 +8,7 @@ import { TicketForm } from 'src/widgets';
 import { StationsContext } from 'src/contexts/StationsContext';
 
 export const HomePage = () => {
-    const { setTheme } = useContext(ThemeContext);
-    setTheme('dark');
 
-    
     const navigate = useNavigate();
 
     const {stations, loading} = useContext(StationsContext);

@@ -1,22 +1,23 @@
-import { useCallback, useContext, useState, type FC } from "react";
+import { useCallback, useState, type FC } from "react";
 import { NavLink } from "react-router";
 import cn from 'classnames';
 import logo from '@images/logo.svg';
 import logoWhite from '@images/logo-white.svg';
-import { ThemeContext } from "src/contexts/ThemeContext";
 
 import './Header.scss';
 
-export const Header:FC = () => {
+interface Props {
+    darkTheme?: boolean
+}
+
+export const Header:FC<Props> = ({darkTheme = false}) => {
     const [isOpen, setIsOpen] = useState(false);
     const handleMenuToggle = useCallback(() => setIsOpen(prev => !prev), []);
 
-    const {theme} = useContext(ThemeContext);
-
     return (
-        <header className={cn("header", theme === 'dark' && 'header__dark')}>
+        <header className={cn("header", darkTheme && 'header__dark')}>
             <div className="logo">
-                <img className="logo__image" alt="Railway" src={theme === 'dark' ? logoWhite : logo} width="74" />
+                <img className="logo__image" alt="Railway" src={darkTheme ? logoWhite : logo} width="74" />
                 <span className="logo__name">Railway</span>
             </div>
             <div className="header__hamburger">
