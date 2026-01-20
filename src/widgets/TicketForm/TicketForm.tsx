@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const TicketForm:FC<Props> = ({stationList, handleFinish, stationsIsLoading, initialValues, theme='dark', formType = 'search'}) => {
-        const [tripType, setTripType] = useState('round');
+        const [tripType, setTripType] = useState(initialValues?.type ?? 'round');
     
         const handleTripTypeChange = useCallback((e: RadioChangeEvent) => setTripType(e.target.value), []);
     

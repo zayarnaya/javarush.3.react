@@ -1,3 +1,3 @@
-export const transformDate = (date: string[]) => {
-    return date.map(date => date && new Date(date)).join(',');
+export const transformDate = (date: Date[] | Date) => {
+    return Array.isArray(date) ? date.map(date => date.toISOString()).join(',') : date.toISOString();
 }
