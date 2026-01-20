@@ -1,19 +1,21 @@
-import { type FC } from "react";
+import { useContext, type FC } from "react";
 import { Outlet } from "react-router";
+import cn from 'classnames';
 
-import './MainLayout.scss';
-import { Header } from "src/widgets/Header/Header";
+import { Header, Footer } from "src/widgets";
+
+import style from './MainLayout.module.scss';
+import { ThemeContext } from "src/contexts/ThemeContext";
 
 export const MainLayout:FC = () => {
-    
+    const {theme} = useContext(ThemeContext);
     return (
         <>
             <Header />
-            <main>
+            <main className={cn(style.main, theme === 'dark' && style["main__dark"])}>
                 <Outlet />
             </main>
-            <footer>
-            </footer>
+            <Footer />
         </>
     )
 }

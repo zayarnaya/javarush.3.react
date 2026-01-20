@@ -6,10 +6,13 @@
   --breakpoint-m: 768px;
   --breakpoint-s: 360px;
 
-  --primary-blue: #5E4AE3; /**/
+  --primary-blue: #5E4AE3;
+  /**/
   --primary-blue-10: #5E4AE325;
-  --primary-red: #FF6060; /**/
-  --primary-black: #010400; /**/
+  --primary-red: #FF6060;
+  /**/
+  --primary-black: #010400;
+  /**/
   --secondary-black: #202020;
   --teal: #7DCFB6;
   --light-orange: #FBD1A2;
@@ -26,7 +29,6 @@
   color: var(--primary-black);
   margin: 0;
   padding: 0;
-  transition: 0.3s;
 }
 
 body {
@@ -35,4 +37,13 @@ body {
   margin: 0;
   overflow-x: hidden;
   min-width: 360px;
+
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100vw;
+  min-height: 100vh;
 }
