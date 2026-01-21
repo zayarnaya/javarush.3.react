@@ -1,7 +1,5 @@
 export const PaymentPage = () => {
-    return (
-        <div>PAYMENT</div>
-    )
-}
+  return <div>PAYMENT</div>;
+};
 
-PaymentPage.displayName = 'Payment.Page'
+PaymentPage.displayName = 'Payment.Page';

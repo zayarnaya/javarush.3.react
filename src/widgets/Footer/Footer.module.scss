@@ -1,37 +1,37 @@
 .footer {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    padding: 64px;
-    gap: 32px;
-    grid-template-areas: 
-    "logo logo logo logo logo logo nav nav nav nav nav nav"
-    ". . . . . . nav nav nav nav nav nav"
-    ". . . . . . nav nav nav nav nav nav"
-    ". . . . . . nav nav nav nav nav nav"
-    ". . . . . . nav nav nav nav nav nav"
-    "c c c c c c . . . . . . ";
-    background-color: var(--primary-black);
-    color: white;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 64px;
+  gap: 32px;
+  grid-template-areas:
+    'logo logo logo logo logo logo nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    'c c c c c c . . . . . . ';
+  background-color: var(--primary-black);
+  color: white;
 
-    &Logo {
-        display: flex;
-        grid-area: logo;
+  &Logo {
+    display: flex;
+    grid-area: logo;
 
-        &Name {
-            color: white;
-        }
+    &Name {
+      color: white;
     }
+  }
 }
 
 .nav {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    padding: 0;
-    gap: 32px;
-    grid-area: nav;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 0;
+  gap: 32px;
+  grid-area: nav;
 }
 
 .cp {
-    color: white;
-    grid-area: c;
+  color: white;
+  grid-area: c;
 }

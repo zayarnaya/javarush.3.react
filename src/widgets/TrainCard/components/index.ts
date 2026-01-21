@@ -1,1 +1,1 @@
-export {StationInfo} from './StationInfo/StationInfo'
+export { StationInfo } from './StationInfo/StationInfo';

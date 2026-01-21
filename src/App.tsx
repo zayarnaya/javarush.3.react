@@ -1,11 +1,15 @@
-import { RouterProvider } from 'react-router'
-import './App.scss'
-import { router } from './router/router'
+import { RouterProvider } from 'react-router';
+import './App.scss';
+import { router } from './router/router';
 import { useEffect, useState } from 'react';
 import { StationsContext, type StationsContextProps } from './contexts/StationsContext';
-import { initialFormState, TicketFormContext, type TicketFormContextProps, type TicketFormValuesPartial } from './contexts/TicketFormContext';
+import {
+  initialFormState,
+  TicketFormContext,
+  type TicketFormContextProps,
+  type TicketFormValuesPartial,
+} from './contexts/TicketFormContext';
 import { useFetch } from './api/useFetch';
-
 
 function App() {
   const { loading, data, fetchIt } = useFetch();
@@ -14,11 +18,9 @@ function App() {
   const [values, setValues] = useState<TicketFormValuesPartial>(initialFormState);
   const formContext: TicketFormContextProps = { values, setValues };
 
-  
-  
   useEffect(() => {
-        fetchIt('stations');
-    }, []);
+    fetchIt('stations');
+  }, []);
 
   return (
     <StationsContext.Provider value={stationsContext}>
@@ -26,8 +28,7 @@ function App() {
         <RouterProvider router={router} />
       </TicketFormContext.Provider>
     </StationsContext.Provider>
-
-  )
+  );
 }
 
-export default App
+export default App;

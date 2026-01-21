@@ -1,26 +1,26 @@
 .form-wrapper {
-    gap: 34px;
+  gap: 34px;
 }
 
 .type-wrapper {
-    background-color: white;
-    border-radius: 10px;
-    height: 34px;
-    overflow: visible;
-    justify-content: space-between;
+  background-color: white;
+  border-radius: 10px;
+  height: 34px;
+  overflow: visible;
+  justify-content: space-between;
 }
 
 .station-wrapper {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 34px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 34px;
 }
 
 .date-wrapper {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .datePicker {
-    width: 100%;
+  width: 100%;
 }
