@@ -1,5 +1,5 @@
 import { Flex, Typography } from 'antd';
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import cn from 'classnames';
 import style from './SearchResultsPage.module.scss';
 import { Banner, TicketForm } from 'src/widgets';

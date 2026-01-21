@@ -48,54 +48,53 @@ export const TicketForm: FC<Props> = ({
           </Form.Item>
         </Flex>
         <div className={style['station-wrapper']}>
-          <Form.Item
-            label={null}
-            name="departure"
-            rules={[{ required: true, message: 'Select the departure station!' }]}
-          >
-            <Flex vertical>
-              <Title level={5}>Departure</Title>
+          <Flex vertical>
+            <Title level={5}>Departure</Title>
+            <Form.Item
+              label={null}
+              name="departure"
+              rules={[{ required: true, message: 'Select the departure station!' }]}
+            >
               <Select
                 loading={stationsIsLoading}
                 options={stationList}
                 showSearch={{ optionFilterProp: 'label' }}
                 placeholder="Select a station"
               />
-            </Flex>
-          </Form.Item>
-          <Form.Item label={null} name="arrival" rules={[{ required: true, message: 'Select the arrival station!' }]}>
-            <Flex vertical>
-              <Title level={5}>Arrival</Title>
+            </Form.Item>
+          </Flex>
+          <Flex vertical>
+            <Title level={5}>Arrival</Title>
+            <Form.Item label={null} name="arrival" rules={[{ required: true, message: 'Select the arrival station!' }]}>
               <Select
                 loading={stationsIsLoading}
                 options={stationList}
                 showSearch={{ optionFilterProp: 'label' }}
                 placeholder="Select a station"
               />
-            </Flex>
-          </Form.Item>
+            </Form.Item>
+          </Flex>
         </div>
+        <Title level={5}>Pick your lucky day!</Title>
         <Form.Item
           label={null}
           name="date"
           className={style['date-wrapper']}
           rules={[{ required: true, message: 'Please select date!' }]}
         >
-          <Title level={5}>Pick your lucky day!</Title>
           {tripType === 'one-way' ? (
             <DatePicker className={style.datePicker} />
           ) : (
             <DatePicker.RangePicker className={style.datePicker} />
           )}
         </Form.Item>
-
-        <Form.Item label={null}>
-          <Flex justify="center">
+        <Flex justify="center">
+          <Form.Item label={null}>
             <Button type="primary" htmlType="submit" block>
               Ticket, please!
             </Button>
-          </Flex>
-        </Form.Item>
+          </Form.Item>{' '}
+        </Flex>
       </Flex>
     </Form>
   );

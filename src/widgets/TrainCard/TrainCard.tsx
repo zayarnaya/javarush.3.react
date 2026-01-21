@@ -37,3 +37,5 @@ export const TrainCard: FC<Props> = ({ loading = false, train }) => {
     </Card>
   );
 };
+
+TrainCard.displayName = 'Train.Card';
