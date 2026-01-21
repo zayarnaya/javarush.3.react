@@ -1,0 +1,30 @@
+.banner {
+    width: 640px;
+    height: 150px;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.image {
+    width: 640px;
+    background-image: linear-gradient(red, blue);
+}
+
+.gradient {
+    width: 640px;
+    height: 150px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: linear-gradient(to right, rgba(0,0,0,.75), transparent);
+}
+
+.link {
+    color: white !important;
+    position: absolute;
+    top: 50%;
+    left: 34px;
+    transform: translateY(-50%);
+    text-decoration: none;
+}
