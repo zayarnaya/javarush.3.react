@@ -1,5 +1,7 @@
 import { useCallback, useState, type FC } from "react";
-import { Button, Radio, InputNumber, Form, Select, DatePicker, type RadioChangeEvent } from 'antd';
+import { Button, Radio, InputNumber, Form, Select, DatePicker, type RadioChangeEvent, Flex, Typography } from 'antd';
+
+import style from './TicketForm.module.scss'
 
 interface Props {
     stationList: {label: string, value: string}[],
@@ -11,6 +13,8 @@ interface Props {
     
 }
 
+const {Title} = Typography;
+
 export const TicketForm:FC<Props> = ({stationList, handleFinish, stationsIsLoading, initialValues, theme='dark', formType = 'search'}) => {
         const [tripType, setTripType] = useState(initialValues?.type ?? 'round');
     
@@ -19,7 +23,8 @@ export const TicketForm:FC<Props> = ({stationList, handleFinish, stationsIsLoadi
     return (
         <Form onFinish={handleFinish}
                 initialValues={initialValues}>
-                <fieldset >
+                    <Flex vertical className={style['form-wrapper']}>
+                <Flex className={style['type-wrapper']}>
                     <Form.Item
                         label={null}
                         name="type"
@@ -33,41 +38,46 @@ export const TicketForm:FC<Props> = ({stationList, handleFinish, stationsIsLoadi
                         label={null}
                         name="passengers"
                         rules={[{ required: true, message: 'Select the number of passengers!' }]}
-                    ><InputNumber step={1} min={0} max={25} /></Form.Item>
-                </fieldset>
+                    ><InputNumber mode='spinner' step={1} min={0} max={25} /></Form.Item>
+                </Flex>
+                <div className={style['station-wrapper']}>
                 <Form.Item
-                    label='Departure'
+                    label={null}
                     name="departure"
                     rules={[{ required: true, message: 'Select the departure station!' }]}
-                ><Select
+                ><Flex vertical><Title level={5}>Departure</Title><Select
                         loading={stationsIsLoading}
                         options={stationList}
                         showSearch={{ optionFilterProp: 'label' }}
                         placeholder='Select a station'
-                    /></Form.Item>
+                    /></Flex></Form.Item>
                 <Form.Item
-                    label="Arrival"
+                    label={null}
                     name="arrival"
                     rules={[{ required: tripType === 'round', message: 'Select the arrival station!' }]}
-                ><Select
+                ><Flex vertical><Title level={5}>Arrival</Title><Select
                         loading={stationsIsLoading}
                         options={stationList}
                         showSearch={{ optionFilterProp: 'label' }}
                         disabled={tripType === 'one-way'}
                         placeholder='Select a station'
-                    /></Form.Item>
-
-                <Form.Item label="Pick your lucky day" name="date" rules={[{required: true, message: 'Please select date!'}]}>
+                    /></Flex></Form.Item>
+</div>
+                <Form.Item label={null} name="date" className={style['date-wrapper']} rules={[{required: true, message: 'Please select date!'}]}>
+                    <Title level={5}>Pick your lucky day!</Title>
                     {tripType === 'one-way'
-                    ? <DatePicker />
-                : <DatePicker.RangePicker />}
+                    ? <DatePicker className={style.datePicker}/>
+                : <DatePicker.RangePicker className={style.datePicker} />}
                 </Form.Item>
 
                 <Form.Item label={null}>
-                    <Button type="primary" htmlType="submit">
+                    <Flex justify="center">
+                    <Button type="primary" htmlType="submit" block>
                         Ticket, please!
                     </Button>
+                    </Flex>
                 </Form.Item>
+                </Flex>
             </Form>
     )
 }

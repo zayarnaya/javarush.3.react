@@ -37,7 +37,7 @@ body {
   margin: 0;
   overflow-x: hidden;
   min-width: 360px;
-
+  background-color: var(--bg-grey);
 }
 
 #root {
@@ -46,4 +46,8 @@ body {
   justify-content: space-between;
   width: 100vw;
   min-height: 100vh;
+}
+
+span {
+  color: inherit;
 }

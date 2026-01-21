@@ -6,6 +6,7 @@ import { TicketForm } from "src/widgets";
 import { useSearchParams } from "react-router";
 import { StationsContext } from "src/contexts/StationsContext";
 import { parseDate } from "./helpers";
+import { PageLayout } from "src/layouts";
 
 export const SearchResultsPage = () => {
 
@@ -23,11 +24,11 @@ export const SearchResultsPage = () => {
     
 
     return (
-        <Flex vertical className={cn(style.wrapper)}>
+        <PageLayout>
             <h1>Search results</h1>
             <TicketForm initialValues={initialValues} handleFinish={handleFinish} stationsIsLoading={loading}
             formType="result" stationList={stationList ?? []} />
-        </Flex>
+        </PageLayout>
     )
 }
 

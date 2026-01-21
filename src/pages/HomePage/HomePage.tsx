@@ -1,11 +1,11 @@
 import { Flex } from 'antd';
 import { useCallback, useContext, useMemo } from 'react';
 import style from './HomePage.module.scss'
-import './override.styles.scss'
+
 import { useNavigate } from 'react-router';
-import { transformDate } from './helpers';
 import { TicketForm } from 'src/widgets';
 import { StationsContext } from 'src/contexts/StationsContext';
+import { mapFormData } from './helpers';
 
 export const HomePage = () => {
 
@@ -15,7 +15,7 @@ export const HomePage = () => {
 
     const stationList = useMemo(() => stations && stations.map(({ name, code }: { name: string, code: string }) => ({ label: name, value: code })), [stations])
 
-    const handleFinish = useCallback((values: Record<string, any>) => navigate(`/search-results?${Object.entries(values).map(([key, value]) => key === 'date' ? `date=${transformDate(value)}` : `${key}=${value}`).join('&')}`), [])
+    const handleFinish = useCallback((values: Record<string, any>) => navigate({pathname: '/search-results', search: mapFormData(values)}), [])
 
     return (
         <Flex vertical align='center' justify='center' className={style.wrapper}>
