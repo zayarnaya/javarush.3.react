@@ -54,12 +54,11 @@ export const TicketForm:FC<Props> = ({stationList, handleFinish, stationsIsLoadi
                 <Form.Item
                     label={null}
                     name="arrival"
-                    rules={[{ required: tripType === 'round', message: 'Select the arrival station!' }]}
+                    rules={[{ required: true, message: 'Select the arrival station!' }]}
                 ><Flex vertical><Title level={5}>Arrival</Title><Select
                         loading={stationsIsLoading}
                         options={stationList}
                         showSearch={{ optionFilterProp: 'label' }}
-                        disabled={tripType === 'one-way'}
                         placeholder='Select a station'
                     /></Flex></Form.Item>
 </div>

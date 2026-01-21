@@ -1,7 +1,8 @@
-import { indianRailwayStations } from "src/mockData/mocks"
+import { indianRailwayStations, trainsMockData, type Train } from "src/mockData/mocks"
 
 const mapTypeToData: Record<string, any> = {
-    stations: indianRailwayStations
+    stations: indianRailwayStations,
+    trains: trainsMockData
 }
 
 export const mockFetch = async (type: string, noDelay = false) => {
@@ -11,3 +12,10 @@ export const mockFetch = async (type: string, noDelay = false) => {
 }
 
 export const fetchStations = async (noDelay = false) => mockFetch('stations', noDelay);
+
+export const fetchTrains = async (departure: string, arrival: string | null, noDelay = false) => {
+    const trains: Train[] = await mockFetch('trains', noDelay) as Train[];
+
+    return trains.filter(({from, to}) => from.code === departure && to.code === arrival);
+ 
+}
