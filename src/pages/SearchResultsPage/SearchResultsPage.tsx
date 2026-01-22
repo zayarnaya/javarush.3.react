@@ -9,6 +9,7 @@ import { parseDate } from './helpers';
 import { PageLayout } from 'src/layouts';
 import banner1 from '@images/banner1.png';
 import banner2 from '@images/banner2.png';
+import dayjs from 'dayjs';
 
 const { Title, Paragraph } = Typography;
 
@@ -27,6 +28,10 @@ export const SearchResultsPage = () => {
     () => stations && stations.map(({ name, code }: { name: string; code: string }) => ({ label: name, value: code })),
     [stations],
   );
+
+  console.log(dayjs('2026-01-20T21:00:00.000Z'));
+  console.log(dayjs('2026-01-20'));
+  console.log(initialValues.date);
 
   return (
     <PageLayout>
