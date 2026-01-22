@@ -46,7 +46,9 @@ export const useFetchTrain = () => {
 
     try {
       const trains: Train[] = (await mockFetch('trains', noDelay)) as Train[];
-      setData(trains.filter(({ id }) => id == trainId));
+      console.log(trains);
+
+      setData(trains.find(({ id }) => id == trainId));
     } catch (error) {
       setError((error as unknown as Error).message);
     }

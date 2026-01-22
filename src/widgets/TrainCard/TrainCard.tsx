@@ -3,7 +3,8 @@ import { Card, Flex, Typography } from 'antd';
 
 import style from './TrainCard.module.scss';
 import type { ClassCode, Train } from 'src/mockData/mocks';
-import { ClassCard, StationInfo } from './components';
+import { ClassCard } from './components';
+import { StationInfo } from 'src/components';
 
 interface Props {
   train: Train;
