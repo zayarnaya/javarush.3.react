@@ -149,7 +149,7 @@ export const indianRailwayStations = [
   { name: 'Hassan', code: 'HAS' },
   { name: 'Hazrat Nizamuddin', code: 'NZM' },
   { name: 'Hospet Junction', code: 'HPT' },
-  { name: 'Howrah Junction', code: 'HWH' },
+  { name: 'Howrah Junction', code: 'HWJ' },
   { name: 'Igatpuri', code: 'IGP' },
   { name: 'Itarsi Junction', code: 'ET' },
   { name: 'Jalandhar City', code: 'JRC' },

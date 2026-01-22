@@ -1,4 +1,4 @@
-import { useCallback, useState, type FC } from 'react';
+import { useCallback, useEffect, useState, type FC } from 'react';
 import { Button, Radio, InputNumber, Form, Select, DatePicker, type RadioChangeEvent, Flex, Typography } from 'antd';
 
 import style from './TicketForm.module.scss';
@@ -9,7 +9,6 @@ interface Props {
   stationsIsLoading: boolean;
   initialValues: Record<string, any>;
   formType?: 'search' | 'result';
-  theme?: 'light' | 'dark';
 }
 
 const { Title } = Typography;
@@ -19,13 +18,38 @@ export const TicketForm: FC<Props> = ({
   handleFinish,
   stationsIsLoading,
   initialValues,
-  theme = 'dark',
   formType = 'search',
 }) => {
   const [tripType, setTripType] = useState(initialValues?.type ?? 'round');
 
+  const [departureList, setDepartureList] = useState<typeof stationList>([]);
+  const [departureStation, setDepartureStation] = useState<{ label: string; value: string } | undefined>(undefined);
+  const [arrivalList, setArrivalList] = useState<typeof stationList>([]);
+  const [arrivalStation, setArrivalStation] = useState<{ label: string; value: string } | undefined>(undefined);
+
+  const handleDepartureChange = useCallback(
+    (value: string) => {
+      setDepartureStation(stationList.find((station) => station.value === value));
+      setArrivalList(stationList.filter((station) => value !== station.value));
+    },
+    [stationList, arrivalList, departureStation],
+  );
+  const handleArrivalChange = useCallback(
+    (value: string) => {
+      setArrivalStation(stationList.find((station) => station.value === value));
+      setDepartureList(stationList.filter((station) => value !== station.value));
+    },
+    [stationList, departureList, arrivalStation],
+  );
+
   const handleTripTypeChange = useCallback((e: RadioChangeEvent) => setTripType(e.target.value), []);
 
+  useEffect(() => {
+    if (stationList && !stationsIsLoading) {
+      setDepartureList(stationList);
+      setArrivalList(stationList);
+    }
+  }, [stationList, stationsIsLoading]);
   return (
     <Form onFinish={handleFinish} initialValues={initialValues}>
       <Flex vertical className={style['form-wrapper']}>
@@ -57,9 +81,13 @@ export const TicketForm: FC<Props> = ({
             >
               <Select
                 loading={stationsIsLoading}
-                options={stationList}
+                options={departureList}
                 showSearch={{ optionFilterProp: 'label' }}
                 placeholder="Select a station"
+                onChange={handleDepartureChange}
+                //@ts-expect-error
+                value={departureStation}
+                allowClear
               />
             </Form.Item>
           </Flex>
@@ -68,9 +96,13 @@ export const TicketForm: FC<Props> = ({
             <Form.Item label={null} name="arrival" rules={[{ required: true, message: 'Select the arrival station!' }]}>
               <Select
                 loading={stationsIsLoading}
-                options={stationList}
+                options={arrivalList}
                 showSearch={{ optionFilterProp: 'label' }}
                 placeholder="Select a station"
+                onChange={handleArrivalChange}
+                //@ts-expect-error
+                value={arrivalStation}
+                allowClear
               />
             </Form.Item>
           </Flex>
