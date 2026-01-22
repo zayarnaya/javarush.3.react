@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 160px;
+  height: 92px;
+  padding: 24px 16px;
+  gap: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.code__3A {
+  background-color: var(--teal);
+}
+
+.code__2A {
+  background-color: var(--light-orange);
+}
+
+.code__1A {
+  background-color: var(--orange);
+}

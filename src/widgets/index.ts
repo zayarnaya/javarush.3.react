@@ -2,3 +2,4 @@ export { Header } from './Header/Header';
 export { Footer } from './Footer/Footer';
 export { TicketForm } from './TicketForm/TicketForm';
 export { Banner } from './Banner/Banner';
+export { TrainCard } from './TrainCard/TrainCard';

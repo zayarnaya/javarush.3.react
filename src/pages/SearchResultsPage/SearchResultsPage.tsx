@@ -1,8 +1,8 @@
-import { Flex, Typography } from 'antd';
+import { Card, Flex, Typography } from 'antd';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import cn from 'classnames';
 import style from './SearchResultsPage.module.scss';
-import { Banner, TicketForm } from 'src/widgets';
+import { Banner, TicketForm, TrainCard } from 'src/widgets';
 import { useSearchParams } from 'react-router';
 import { StationsContext } from 'src/contexts/StationsContext';
 import { parseDate } from './helpers';
@@ -10,6 +10,8 @@ import { PageLayout } from 'src/layouts';
 import banner1 from '@images/banner1.png';
 import banner2 from '@images/banner2.png';
 import dayjs from 'dayjs';
+import { useFetchTrains } from 'src/api/mockApi';
+import type { Train } from 'src/mockData/mocks';
 
 const { Title, Paragraph } = Typography;
 
@@ -29,9 +31,11 @@ export const SearchResultsPage = () => {
     [stations],
   );
 
-  console.log(dayjs('2026-01-20T21:00:00.000Z'));
-  console.log(dayjs('2026-01-20'));
-  console.log(initialValues.date);
+  const { data: trains, loading: trainsLoading, error, fetchTrains } = useFetchTrains();
+
+  useEffect(() => {
+    fetchTrains(initialValues.departure, initialValues.arrival);
+  }, []);
 
   return (
     <PageLayout>
@@ -53,6 +57,14 @@ export const SearchResultsPage = () => {
           chaos!
         </Paragraph>
       </Flex>
+      <section>
+        <Title level={2}>Available Trains</Title>
+        <Flex vertical gap={32} style={{ marginBottom: '128px' }}>
+          {trainsLoading && <Card loading />}
+          {!trainsLoading && !!trains?.length && trains.map((train: Train) => <TrainCard train={train} />)}
+          {!trainsLoading && !trains?.length && <Paragraph>Sorry, no trains found! Try another station</Paragraph>}
+        </Flex>
+      </section>
     </PageLayout>
   );
 };

@@ -1,4 +1,6 @@
 import { indianRailwayStations, trainsMockData, type Train } from 'src/mockData/mocks';
+import { useFetch } from './useFetch';
+import { useState } from 'react';
 
 const mapTypeToData: Record<string, any> = {
   stations: indianRailwayStations,
@@ -13,8 +15,23 @@ export const mockFetch = async (type: string, noDelay = false) => {
 
 export const fetchStations = async (noDelay = false) => mockFetch('stations', noDelay);
 
-export const fetchTrains = async (departure: string, arrival: string | null, noDelay = false) => {
-  const trains: Train[] = (await mockFetch('trains', noDelay)) as Train[];
+export const useFetchTrains = () => {
+  const [data, setData] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  return trains.filter(({ from, to }) => from.code === departure && to.code === arrival);
+  async function fetchTrains(departure: string, arrival: string, noDelay = false) {
+    setLoading(true);
+
+    try {
+      const trains: Train[] = (await mockFetch('trains', noDelay)) as Train[];
+      setData(trains.filter(({ from, to }) => from.code === departure && to.code === arrival));
+    } catch (error) {
+      setError((error as unknown as Error).message);
+    }
+
+    setLoading(false);
+  }
+
+  return { data, loading, error, fetchTrains };
 };
