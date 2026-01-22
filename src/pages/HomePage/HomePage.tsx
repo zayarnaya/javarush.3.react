@@ -5,7 +5,7 @@ import style from './HomePage.module.scss';
 import { useNavigate } from 'react-router';
 import { TicketForm } from 'src/widgets';
 import { StationsContext } from 'src/contexts/StationsContext';
-import { mapFormData } from './helpers';
+import { mapFormData } from 'src/shared';
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -34,7 +34,6 @@ export const HomePage = () => {
         handleFinish={handleFinish}
         stationList={stationList ?? []}
         stationsIsLoading={loading}
-        theme="dark"
       />
     </Flex>
   );

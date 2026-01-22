@@ -1,17 +1,14 @@
 import { Card, Flex, Typography } from 'antd';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
-import cn from 'classnames';
-import style from './SearchResultsPage.module.scss';
 import { Banner, TicketForm, TrainCard } from 'src/widgets';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { StationsContext } from 'src/contexts/StationsContext';
-import { parseDate } from './helpers';
 import { PageLayout } from 'src/layouts';
 import banner1 from '@images/banner1.png';
 import banner2 from '@images/banner2.png';
-import dayjs from 'dayjs';
 import { useFetchTrains } from 'src/api/mockApi';
 import type { Train } from 'src/mockData/mocks';
+import { mapFormData, parseDate } from 'src/shared';
 
 const { Title, Paragraph } = Typography;
 
@@ -22,8 +19,6 @@ export const SearchResultsPage = () => {
   //@ts-expect-error
   initialValues.date = parseDate(initialValues.date);
 
-  const handleFinish = useCallback((values: Record<string, any>) => console.log(values), []);
-
   const { stations, loading } = useContext(StationsContext);
 
   const stationList = useMemo(
@@ -31,10 +26,25 @@ export const SearchResultsPage = () => {
     [stations],
   );
 
-  const { data: trains, loading: trainsLoading, error, fetchTrains } = useFetchTrains();
+  const { data: trains, loading: trainsLoading, fetchTrains } = useFetchTrains();
 
   useEffect(() => {
     fetchTrains(initialValues.departure, initialValues.arrival);
+  }, []);
+
+  const handleFinish = useCallback(
+    (values: Record<string, any>) => {
+      console.log(values);
+      const newSearchParams = new URLSearchParams(mapFormData(values));
+      setSearchParams(newSearchParams, { replace: true });
+      fetchTrains(values.departure, values.arrival);
+    },
+    [searchParams],
+  );
+
+  const navigate = useNavigate();
+  const handleTrainSelect = useCallback((id: number, code: string) => {
+    navigate({ pathname: '/review-booking', search: searchParams.toString() + `classCode=${code}&trainId=${id}` });
   }, []);
 
   return (
@@ -61,7 +71,9 @@ export const SearchResultsPage = () => {
         <Title level={2}>Available Trains</Title>
         <Flex vertical gap={32} style={{ marginBottom: '128px' }}>
           {trainsLoading && <Card loading />}
-          {!trainsLoading && !!trains?.length && trains.map((train: Train) => <TrainCard train={train} />)}
+          {!trainsLoading &&
+            !!trains?.length &&
+            trains.map((train: Train) => <TrainCard train={train} key={train.id} onSelectTrain={handleTrainSelect} />)}
           {!trainsLoading && !trains?.length && <Paragraph>Sorry, no trains found! Try another station</Paragraph>}
         </Flex>
       </section>

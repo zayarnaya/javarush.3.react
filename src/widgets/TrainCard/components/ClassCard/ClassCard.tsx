@@ -16,10 +16,10 @@ interface Props {
   onClick: (code: ClassCode) => void;
 }
 
-export const ClassCard: FC<Props> = ({ code, avl, wl = 1, tariff = 'TatKal', price, onClick, name = '' }) => {
+export const ClassCard: FC<Props> = ({ code, avl, wl = 1, tariff = 'TatKal', price, onClick, name = '', ...props }) => {
   const handleClick = useCallback(() => onClick(code), [code]);
   return (
-    <div className={cn(style.wrapper, style[`code__${code}`])} onClick={handleClick} aria-label={name}>
+    <div {...props} className={cn(style.wrapper, style[`code__${code}`])} onClick={handleClick} aria-label={name}>
       <div className={style.row}>
         <span>{code}</span>
         <span>{avl ? `Avl - ${to3digit(avl)}` : `WL - ${wl}`}</span>

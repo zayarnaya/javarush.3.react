@@ -2,19 +2,25 @@ import { useCallback, type FC } from 'react';
 import { Card, Flex, Typography } from 'antd';
 
 import style from './TrainCard.module.scss';
-import type { Train } from 'src/mockData/mocks';
+import type { ClassCode, Train } from 'src/mockData/mocks';
 import { ClassCard, StationInfo } from './components';
 
 interface Props {
   train: Train;
+  onSelectTrain: (id: number, code: string) => void;
 }
 
 const { Title, Text } = Typography;
 
-export const TrainCard: FC<Props> = ({ train }) => {
-  const handleClassSelect = useCallback((code: string) => console.log(code), []);
+export const TrainCard: FC<Props> = ({ train, onSelectTrain, ...props }) => {
+  const handleClassSelect = useCallback(
+    (code: ClassCode) => {
+      onSelectTrain(train.id, code);
+    },
+    [train, onSelectTrain],
+  );
   return (
-    <Card className={style.card}>
+    <Card {...props} className={style.card}>
       <Title level={3}>
         {train.trainNumber} - {train.trainName}
       </Title>
@@ -35,8 +41,9 @@ export const TrainCard: FC<Props> = ({ train }) => {
         />
       </Flex>
       <Flex justify="space-between">
-        {train.classes.map((item) => (
+        {train.classes.map((item, index) => (
           <ClassCard
+            key={`${item.classCode}#${index}`}
             onClick={handleClassSelect}
             code={item.classCode}
             name={item.className}

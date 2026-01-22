@@ -35,3 +35,24 @@ export const useFetchTrains = () => {
 
   return { data, loading, error, fetchTrains };
 };
+
+export const useFetchTrain = () => {
+  const [data, setData] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function fetchTrainById(trainId: number | string, noDelay = false) {
+    setLoading(true);
+
+    try {
+      const trains: Train[] = (await mockFetch('trains', noDelay)) as Train[];
+      setData(trains.filter(({ id }) => id == trainId));
+    } catch (error) {
+      setError((error as unknown as Error).message);
+    }
+
+    setLoading(false);
+  }
+
+  return { data, loading, error, fetchTrainById };
+};
