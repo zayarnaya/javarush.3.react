@@ -1,0 +1,24 @@
+.image-wrapper {
+  width: 192px;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.image {
+  width: 192px;
+}
+
+.info-wrapper {
+  width: 190px;
+  height: 158px;
+  border: 1px solid var(--primary-black-50);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.title {
+  height: 42px;
+  white-space: nowrap;
+  overflow: hidden;
+}

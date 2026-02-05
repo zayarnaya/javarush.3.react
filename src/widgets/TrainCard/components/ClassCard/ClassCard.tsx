@@ -2,7 +2,7 @@ import { useCallback, type FC } from 'react';
 import cn from 'classnames';
 
 import style from './ClassCard.module.scss';
-import { to3digit, toRupeees } from './helpers';
+import { to3digit, toRupeees } from 'src/shared/helpers';
 
 export type ClassCode = '3A' | '2A' | '1A';
 

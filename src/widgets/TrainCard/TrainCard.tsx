@@ -2,7 +2,7 @@ import { useCallback, type FC } from 'react';
 import { Card, Flex, Typography } from 'antd';
 
 import style from './TrainCard.module.scss';
-import type { ClassCode, Train } from 'src/mockData/mocks';
+import type { ClassCode, Train } from 'src/api/mocks';
 import { ClassCard } from './components';
 import { StationInfo } from 'src/components';
 

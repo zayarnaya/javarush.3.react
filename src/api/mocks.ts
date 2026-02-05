@@ -1223,3 +1223,66 @@ export const trainsMockData: Train[] = [
     ],
   },
 ];
+
+import paneer from '@images/paneer_tikka.png';
+import tandoori from '@images/tandoori_chicken.png';
+import aloo from '@images/aloo_paratha.png';
+
+export interface Food {
+  id: number;
+  name: string;
+  price: string | number;
+  image: any;
+}
+
+export const food = [
+  {
+    id: 1,
+    name: 'Paneer Tikka Rice Bowl - Mini',
+    price: 200,
+    image: paneer,
+  },
+  {
+    id: 2,
+    name: 'Grilled Tandoori Chicken with dry fruits',
+    price: 500,
+    image: tandoori,
+  },
+  {
+    id: 3,
+    name: 'Aloo Paratha Curd Meal (2 pcs)',
+    price: 120,
+    image: aloo,
+  },
+];
+
+export interface Offer {
+  id: number;
+  discount: {
+    amount: number;
+    type: 'percentage' | 'amount';
+    minPrice?: number | string;
+    maxPrice?: number | string;
+  };
+  code: string;
+}
+
+export const mockOffers: Offer[] = [
+  {
+    id: 1,
+    discount: {
+      amount: 50,
+      type: 'percentage',
+      maxPrice: '₹100',
+    },
+    code: 'BOOKNOW',
+  },
+  {
+    id: 2,
+    discount: {
+      amount: 20,
+      type: 'percentage',
+    },
+    code: 'FIRSTTIME',
+  },
+];

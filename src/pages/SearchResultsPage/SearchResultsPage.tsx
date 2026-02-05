@@ -7,7 +7,7 @@ import { PageLayout } from 'src/layouts';
 import banner1 from '@images/banner1.png';
 import banner2 from '@images/banner2.png';
 import { useFetchTrains } from 'src/api/mockApi';
-import type { Train } from 'src/mockData/mocks';
+import type { Train } from 'src/api/mocks';
 import { mapFormData, parseDate } from 'src/shared';
 
 const { Title, Paragraph } = Typography;

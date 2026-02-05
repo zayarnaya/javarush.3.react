@@ -1,10 +1,11 @@
-import { indianRailwayStations, trainsMockData, type Train } from 'src/mockData/mocks';
-import { useFetch } from './useFetch';
+import { food, indianRailwayStations, mockOffers, trainsMockData, type Train } from './mocks';
 import { useState } from 'react';
 
 const mapTypeToData: Record<string, any> = {
   stations: indianRailwayStations,
   trains: trainsMockData,
+  food: food,
+  offers: mockOffers,
 };
 
 export const mockFetch = async (type: string, noDelay = false) => {
@@ -46,7 +47,6 @@ export const useFetchTrain = () => {
 
     try {
       const trains: Train[] = (await mockFetch('trains', noDelay)) as Train[];
-      console.log(trains);
 
       setData(trains.find(({ id }) => id == trainId));
     } catch (error) {
@@ -57,4 +57,46 @@ export const useFetchTrain = () => {
   }
 
   return { data, loading, error, fetchTrainById };
+};
+
+export const useFetchFood = () => {
+  const [data, setData] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function fetchFood(noDelay = false) {
+    setLoading(true);
+
+    try {
+      const food = await mockFetch('food', noDelay);
+      setData(food);
+    } catch (error) {
+      setError((error as unknown as Error).message);
+    }
+
+    setLoading(false);
+  }
+
+  return { data, loading, error, fetchFood };
+};
+
+export const useFetchOffers = () => {
+  const [data, setData] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function fetchOffers(noDelay = false) {
+    setLoading(true);
+
+    try {
+      const offers = await mockFetch('offers', noDelay);
+      setData(offers);
+    } catch (error) {
+      setError((error as unknown as Error).message);
+    }
+
+    setLoading(false);
+  }
+
+  return { data, loading, error, fetchOffers };
 };

@@ -1,5 +1,5 @@
 import { Card, DatePicker, Flex, Form, Input, Typography } from 'antd';
-import type { ChangeEvent, FC } from 'react';
+import { useCallback, type ChangeEvent, type FC } from 'react';
 
 import style from './PassengerCard.module.scss';
 
@@ -13,12 +13,19 @@ export interface Passenger {
 
 interface Props extends Passenger {
   onFieldChange: (e: ChangeEvent) => void;
+  onDateChange: (id: number, date: Date | null) => void;
 }
 
 const { Item } = Form;
 const { Title, Text } = Typography;
 
-export const PassengerCard: FC<Props> = ({ id, onFieldChange, ...props }) => {
+export const PassengerCard: FC<Props> = ({ id, onFieldChange, onDateChange, ...props }) => {
+  const handleDateChange = useCallback(
+    (date: Date | null) => {
+      onDateChange(id, date);
+    },
+    [onDateChange],
+  );
   return (
     <Card {...props} className={style.card}>
       <Title level={3}>Passenger {id}</Title>
@@ -46,10 +53,12 @@ export const PassengerCard: FC<Props> = ({ id, onFieldChange, ...props }) => {
           <Text>Date of birth</Text>
 
           <Item name="birthDate" rules={[{ required: true, message: "Please fill in passenger's date of birth" }]}>
-            <DatePicker placeholder="12.12.1975" onChange={(e: ChangeEvent | null) => e && onFieldChange(e)} />
+            <DatePicker placeholder="12.12.1975" onChange={handleDateChange} />
           </Item>
         </Flex>
       </Form>
     </Card>
   );
 };
+
+PassengerCard.displayName = 'Passenger.Card';
