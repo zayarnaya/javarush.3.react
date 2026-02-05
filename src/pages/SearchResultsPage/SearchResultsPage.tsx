@@ -44,7 +44,7 @@ export const SearchResultsPage = () => {
 
   const navigate = useNavigate();
   const handleTrainSelect = useCallback((id: number, code: string) => {
-    navigate({ pathname: '/review-booking', search: searchParams.toString() + `classCode=${code}&trainId=${id}` });
+    navigate({ pathname: '/review-booking', search: searchParams.toString() + `&classCode=${code}&trainId=${id}` });
   }, []);
 
   return (

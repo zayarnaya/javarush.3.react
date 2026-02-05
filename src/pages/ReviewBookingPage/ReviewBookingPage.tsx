@@ -6,8 +6,9 @@ import { StationInfo } from 'src/components';
 import { parseDate } from 'src/shared';
 import { PageLayout } from 'src/layouts';
 import { FoodCard, OfferCard, PassengerCard, type Passenger } from './components';
-import type { Food, Offer } from 'src/api/mocks';
+import type { Food, Offer, Train } from 'src/api/mocks';
 import style from './ReviewBookingPage.module.scss';
+import { getBasePrice } from './helpers';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -19,6 +20,8 @@ export const ReviewBookingPage = () => {
   //@ts-expect-error
   details.date = parseDate(details.date);
 
+  console.log(searchParams, details);
+
   const [passengersInfo, setPassengersInfo] = useState<Passenger[]>(
     new Array(+details.passengers).fill(null).map((_, index) => ({
       id: index + 1,
@@ -26,10 +29,9 @@ export const ReviewBookingPage = () => {
       phone: null,
       email: null,
       birthDate: null,
+      meal: [],
     })),
   );
-
-  const [meal, setMeal] = useState<number[]>([]);
 
   const [tripDetails, setTripDetails] = useState(details);
 
@@ -116,27 +118,13 @@ export const ReviewBookingPage = () => {
     );
   }, []);
 
-  const handleFoodSelect = useCallback((id: number) => {
-    setMeal((prev) => prev.concat(id));
-    // setSearchParams(prev => {
-    //   const newParams = new URLSearchParams(prev.toString());
-    //   const meals = newParams.get('meal')?.split(',').map(Number) ?? [];
-    //   meals.push(id);
-    //   newParams.set('meal', meals.toString());
-    //   return newParams;
-    // }, {replace: true})
-  }, []);
-
-  const handleFoodDeselect = useCallback((id: number) => {
-    setMeal((prev) => prev.filter((item) => item !== id));
-    // setSearchParams(prev => {
-    //   const newParams = new URLSearchParams(prev.toString());
-    //   console.log(prev.toString())
-    //   const meals = newParams.get('meal')?.split(',')?.map(Number)?.filter(item => item !== id) ?? [];
-    //   newParams.set('meal', meals.toString());
-    //   return newParams;
-    // }, {replace: true})
-  }, []);
+  const handleFoodChange = useCallback(
+    (id: number, meal: number[]) =>
+      setPassengersInfo((prev) =>
+        prev.map((passenger) => (passenger.id === id ? { ...passenger, meal } : { ...passenger })),
+      ),
+    [],
+  );
 
   return (
     <PageLayout>
@@ -175,30 +163,13 @@ export const ReviewBookingPage = () => {
             {...passenger}
             onFieldChange={handleFieldChange}
             onDateChange={handleDateChange}
+            food={food}
+            foodLoading={foodLoading}
+            onFoodChange={handleFoodChange}
             key={`passenger__${passenger.id}`}
           />
         ))}
-        <Flex gap={32}>
-          {foodLoading ? (
-            <Card loading />
-          ) : (
-            food &&
-            food.map((item: Food) => (
-              <FoodCard
-                key={`food_${item.id}`}
-                {...item}
-                handleSelectClick={handleFoodSelect}
-                handleDeselectClick={handleFoodDeselect}
-                isSelected={meal.includes(item.id)}
-              />
-            ))
-          )}
-        </Flex>
-        <Flex justify="flex-end">
-          <Link to="/">
-            View more <span className={style.arrow}>{'>'}</span>
-          </Link>
-        </Flex>
+
         <Card className={style.offers} loading={offersLoading}>
           <Title level={3} className={style['offers__title']}>
             Offers
@@ -233,6 +204,31 @@ export const ReviewBookingPage = () => {
             </Button>
           </Card>
         </div>
+        <Card>
+          <Title level={3}>Bill Details</Title>
+          <Flex gap={4} vertical>
+            <Flex justify="space-between">
+              <Text type="secondary">Base Ticket Fare</Text>
+              <Text type="secondary">{train && `₹${getBasePrice(train, tripDetails.classCode)}`}</Text>
+            </Flex>
+            {/* {food && !!meal.length && meal.map(id => {
+              const dish = food.find((item: Food) => item.id === id);
+              if (!dish) return null;
+              return (
+                <Flex justify='space-between'>
+                  <Text type='secondary'>{dish.name}</Text>
+                  <Text type='secondary'>{typeof dish.price === 'string' ? dish.price : `₹${dish.price}`}</Text>
+                </Flex>
+              )
+            })} */}
+            {extraBaggage && (
+              <Flex justify="space-between">
+                <Text type="secondary">Extra Baggage</Text>
+                <Text type="secondary">{`₹500`}</Text>
+              </Flex>
+            )}
+          </Flex>
+        </Card>
       </Flex>
     </PageLayout>
   );
