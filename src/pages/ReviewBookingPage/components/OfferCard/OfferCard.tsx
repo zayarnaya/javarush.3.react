@@ -10,7 +10,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const OfferCard: FC<Props> = ({ offer, handleClick, ...rest }) => {
-  const handleApplyClick = useCallback(() => handleClick(offer.id), [offer.id]);
+  const handleApplyClick = useCallback(() => handleClick(offer.id), []);
   return (
     <Flex justify="space-between" gap={20} {...rest} data-id={offer.id}>
       <Flex gap={8} className={style.info}>

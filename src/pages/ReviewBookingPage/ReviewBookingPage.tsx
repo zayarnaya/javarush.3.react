@@ -1,7 +1,7 @@
-import { Button, Card, Flex, Typography } from 'antd';
-import { useCallback, useEffect, useState, type ChangeEvent } from 'react';
+import { Button, Card, Flex, Input, Typography } from 'antd';
+import { useCallback, useEffect, useState, type ChangeEvent, type FocusEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { useFetchFood, useFetchOffers, useFetchTrain } from 'src/api/mockApi';
+import { useApplyCode, useFetchFood, useFetchOffers, useFetchTrain } from 'src/api/mockApi';
 import { StationInfo } from 'src/components';
 import { parseDate } from 'src/shared';
 import { PageLayout } from 'src/layouts';
@@ -36,6 +36,50 @@ export const ReviewBookingPage = () => {
   const { data: train, loading, fetchTrainById } = useFetchTrain();
   const { data: food, loading: foodLoading, fetchFood } = useFetchFood();
   const { data: offers, loading: offersLoading, fetchOffers } = useFetchOffers();
+
+  const [promocode, setPromocode] = useState('');
+  const [promoError, setPromoError] = useState(false);
+  const [extraBaggage, setExtraBaggage] = useState(false);
+
+  const handlePromocodeChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPromoError(false);
+      setPromocode(e.currentTarget.value);
+    },
+    [promocode],
+  );
+
+  const handlePromocodeApply = useCallback(
+    (id: number) => {
+      setPromoError(false);
+      const offer = offers?.find((offer: Offer) => offer.id === id);
+      if (!offer) {
+        setPromoError(true);
+      } else {
+        setPromocode(offer.code);
+      }
+    },
+    [promoError, offers],
+  );
+
+  const handlePromocodeBlur = useCallback(
+    (e: FocusEvent<HTMLInputElement>) => {
+      setPromoError(false);
+      const code = e.currentTarget.value?.toLowerCase();
+      if (!code) return;
+
+      const offer = offers?.find((offer: Offer) => offer.code.toLowerCase() === code);
+      if (!offer) {
+        setPromoError(true);
+      } else {
+        setPromocode(e.currentTarget.value);
+      }
+    },
+    [promoError, offers],
+  );
+
+  const handleExtraBaggageAdd = useCallback(() => setExtraBaggage(true), []);
+  const handleExtraBaggageRemove = useCallback(() => setExtraBaggage(false), []);
 
   useEffect(() => {
     if (tripDetails.trainId) {
@@ -96,7 +140,7 @@ export const ReviewBookingPage = () => {
 
   return (
     <PageLayout>
-      <Flex vertical gap={32}>
+      <Flex vertical gap={32} className={style.wrapper}>
         <Title level={1}>Review your booking</Title>
         <Card loading={loading}>
           <Title level={4}>Boarding Details</Title>
@@ -155,17 +199,41 @@ export const ReviewBookingPage = () => {
             View more <span className={style.arrow}>{'>'}</span>
           </Link>
         </Flex>
-      </Flex>
+        <Card className={style.offers} loading={offersLoading}>
+          <Title level={3} className={style['offers__title']}>
+            Offers
+          </Title>
+          {offers &&
+            offers.map((offer: Offer) => <OfferCard offer={offer} key={offer.id} handleClick={handlePromocodeApply} />)}
+        </Card>
 
-      <Card className={style.offers} loading={offersLoading}>
-        <Title level={3} className={style['offers__title']}>
-          Offers
-        </Title>
-        {offers &&
-          offers.map((offer: Offer) => (
-            <OfferCard offer={offer} key={offer.id} handleClick={(id: number) => console.log(id)} />
-          ))}
-      </Card>
+        <div className={style.cards}>
+          <Card className={style.card}>
+            <Title level={3}>Apply Code</Title>
+            <div className={style['promo-error']}>
+              {promoError && <Paragraph type="danger">There is no such promocode! Try using another.</Paragraph>}
+            </div>
+            <Input
+              placeholder="Enter Code"
+              onChange={handlePromocodeChange}
+              onBlur={handlePromocodeBlur}
+              value={promocode}
+            />
+          </Card>
+          <Card className={style.card}>
+            <Title level={3}>Extra Baggage</Title>
+            <div className={style['promo-error']}></div>
+            <Button
+              color="default"
+              variant="outlined"
+              className={style['card__button']}
+              onClick={extraBaggage ? handleExtraBaggageRemove : handleExtraBaggageAdd}
+            >
+              {extraBaggage ? 'Remove from Ticket' : 'Add to Ticket'}
+            </Button>
+          </Card>
+        </div>
+      </Flex>
     </PageLayout>
   );
 };
