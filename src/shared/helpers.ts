@@ -14,8 +14,15 @@ export const parseDate = (dateStr: string) => dateStr.split(',').map((date) => d
 
 export const to3digit = (num: number) => num.toString().padStart(3, '0');
 
-export const toRupeees = (num: number) =>
-  new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-  }).format(num);
+export const fromRupees = (str: string | number): number => {
+  if (typeof str === 'number') return str;
+  return parseFloat(str.replace(/₹/g, ''));
+};
+
+export const toRupeees = (num: number | string): string =>
+  typeof num === 'string'
+    ? num
+    : new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+      }).format(num);

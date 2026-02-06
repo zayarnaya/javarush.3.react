@@ -1,14 +1,15 @@
 import { Button, Card, Flex, Input, Typography } from 'antd';
-import { useCallback, useEffect, useState, type ChangeEvent, type FocusEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FocusEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useApplyCode, useFetchFood, useFetchOffers, useFetchTrain } from 'src/api/mockApi';
 import { StationInfo } from 'src/components';
 import { parseDate } from 'src/shared';
 import { PageLayout } from 'src/layouts';
-import { FoodCard, OfferCard, PassengerCard, type Passenger } from './components';
+import { BillRow, FoodCard, OfferCard, PassengerCard, type Passenger } from './components';
 import type { Food, Offer, Train } from 'src/api/mocks';
 import style from './ReviewBookingPage.module.scss';
-import { getBasePrice } from './helpers';
+import { getBasePrice, getDiscountAmount, getTotalFoodAmount } from './helpers';
+import { fromRupees, mapFormData } from 'src/shared/helpers';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -19,8 +20,6 @@ export const ReviewBookingPage = () => {
   const details = Object.fromEntries(searchParams.entries());
   //@ts-expect-error
   details.date = parseDate(details.date);
-
-  console.log(searchParams, details);
 
   const [passengersInfo, setPassengersInfo] = useState<Passenger[]>(
     new Array(+details.passengers).fill(null).map((_, index) => ({
@@ -126,6 +125,30 @@ export const ReviewBookingPage = () => {
     [],
   );
 
+  const basePrice = useMemo(
+    () => getBasePrice(train, tripDetails.classCode) * +tripDetails.passengers,
+    [train, tripDetails.classCode],
+  );
+
+  const mealPrice = useMemo(
+    () =>
+      passengersInfo.reduce(
+        //@ts-expect-error
+        (acc: Record<string, number>, { meal }: { meal: number[] }) => {
+          const newAcc = { ...acc };
+          for (let id of meal) {
+            if (!newAcc[`${id}`]) {
+              newAcc[id] = 0;
+            }
+            newAcc[id] += 1;
+          }
+          return newAcc;
+        },
+        {},
+      ),
+    [passengersInfo],
+  );
+
   return (
     <PageLayout>
       <Flex vertical gap={32} className={style.wrapper}>
@@ -204,29 +227,62 @@ export const ReviewBookingPage = () => {
             </Button>
           </Card>
         </div>
-        <Card>
+        <Card loading={loading || foodLoading || offersLoading}>
           <Title level={3}>Bill Details</Title>
           <Flex gap={4} vertical>
-            <Flex justify="space-between">
-              <Text type="secondary">Base Ticket Fare</Text>
-              <Text type="secondary">{train && `₹${getBasePrice(train, tripDetails.classCode)}`}</Text>
-            </Flex>
-            {/* {food && !!meal.length && meal.map(id => {
-              const dish = food.find((item: Food) => item.id === id);
-              if (!dish) return null;
-              return (
-                <Flex justify='space-between'>
-                  <Text type='secondary'>{dish.name}</Text>
-                  <Text type='secondary'>{typeof dish.price === 'string' ? dish.price : `₹${dish.price}`}</Text>
-                </Flex>
-              )
-            })} */}
-            {extraBaggage && (
-              <Flex justify="space-between">
-                <Text type="secondary">Extra Baggage</Text>
-                <Text type="secondary">{`₹500`}</Text>
-              </Flex>
+            <BillRow title="Base Ticket Fare" amount={basePrice} />
+            {food &&
+              Object.entries(mealPrice).map(([foodId, num]) => {
+                const dish = food?.find((item: Food) => item.id === +foodId);
+                if (!dish || !num) return null;
+                return (
+                  <BillRow
+                    title={`${dish.name}${num > 1 ? ` x ${num}` : ''}`}
+                    amount={(typeof dish.price === 'string' ? fromRupees(dish.price) : dish.price) * num}
+                  />
+                );
+              })}
+            {extraBaggage && <BillRow title="Extra Baggage" amount={500} />}
+            {promocode && !promoError && (
+              <strong>
+                <BillRow
+                  neg
+                  title="Discount"
+                  amount={getDiscountAmount(
+                    +basePrice + +getTotalFoodAmount(mealPrice, food) + (extraBaggage ? 500 : 0),
+                    promocode,
+                    offers,
+                  )}
+                />
+              </strong>
             )}
+            <Flex justify="space-between">
+              <Text className={style.total}>Total Charge</Text>
+              <Text
+                className={style.total}
+              >{`₹${(+basePrice + +getTotalFoodAmount(mealPrice, food) + (extraBaggage ? 500 : 0) - getDiscountAmount(+basePrice + +getTotalFoodAmount(mealPrice, food) + (extraBaggage ? 500 : 0), promocode, offers)).toFixed(2)}`}</Text>
+            </Flex>
+          </Flex>
+        </Card>
+        <Card variant="borderless">
+          <Flex vertical align="center" gap={16}>
+            <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
+            <Button
+              style={{ width: '400px', padding: '16px 0', height: '56px' }}
+              type="primary"
+              variant="solid"
+              onClick={() => navigate('/payment')}
+            >
+              Book Now
+            </Button>
+            <Button
+              style={{ width: '400px', padding: '16px 0', height: '56px' }}
+              variant="outlined"
+              color="danger"
+              onClick={() => navigate({ pathname: '/search-results', search: mapFormData(tripDetails) })}
+            >
+              Cancel
+            </Button>
           </Flex>
         </Card>
       </Flex>
