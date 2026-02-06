@@ -1,5 +1,5 @@
 import { Button, Card, Flex, Input, Typography } from 'antd';
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FocusEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type FocusEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useApplyCode, useBooking, useFetchFood, useFetchOffers, useFetchTrain, type Passenger } from 'src/api/mockApi';
 import { StationInfo } from 'src/components';
@@ -134,7 +134,31 @@ export const ReviewBookingPage = () => {
 
   const { loading: bookingLoading, error, book } = useBooking();
 
+  const [bookingFormError, setBookingFormError] = useState(false);
+
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    if (bookingFormError) {
+      timerRef.current = setTimeout(() => setBookingFormError(false), 3000);
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [bookingFormError]);
+
   const handleBooking = useCallback(async () => {
+    for (let passenger of passengersInfo) {
+      for (let key in passenger) {
+        //@ts-expect-error
+        if (!passenger[key]) {
+          setBookingFormError(true);
+          return;
+        }
+      }
+    }
     const purchaseId = await book({
       train,
       passengers: passengersInfo,
@@ -144,7 +168,6 @@ export const ReviewBookingPage = () => {
       food,
       promocodes: offers,
     });
-    console.log(purchaseId);
     navigate({ pathname: '/payment', search: new URLSearchParams({ purchaseId: `${purchaseId}` }).toString() });
   }, [train, food, offers, passengersInfo, tripDetails, extraBaggage, promocode]);
 
@@ -254,7 +277,7 @@ export const ReviewBookingPage = () => {
             </Flex>
           </Flex>
         </Card>
-        <Card variant="borderless">
+        <Card variant="borderless" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
           <Flex vertical align="center" gap={16}>
             <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
             <Button
@@ -274,6 +297,24 @@ export const ReviewBookingPage = () => {
             >
               Cancel
             </Button>
+            <Flex justify="center" style={{ height: '60px', display: 'flex' }}>
+              {bookingFormError && (
+                <Text type="danger" style={{ transition: 'all ease .5s' }}>
+                  Fill out Passenger Data, please!
+                </Text>
+              )}
+            </Flex>
+            <Flex gap={32} justify="center">
+              <Text type="secondary" style={{ cursor: 'pointer' }}>
+                Cancellation Policy
+              </Text>
+              <Text type="secondary" style={{ cursor: 'pointer' }}>
+                Terms & Conditions
+              </Text>
+              <Text type="secondary" style={{ cursor: 'pointer' }}>
+                Travel Insurance
+              </Text>
+            </Flex>
           </Flex>
         </Card>
       </Flex>
