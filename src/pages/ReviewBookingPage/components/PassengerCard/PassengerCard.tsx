@@ -5,14 +5,7 @@ import style from './PassengerCard.module.scss';
 import type { Food } from 'src/api/mocks';
 import { FoodCard } from '../FoodCard/FoodCard';
 import { Link } from 'react-router';
-
-export interface Passenger {
-  id: number;
-  fullName: string | null;
-  phone: string | null;
-  email: string | null;
-  birthDate: any | null;
-}
+import type { Passenger } from 'src/api/mockApi';
 
 interface Props extends Passenger {
   onFieldChange: (e: ChangeEvent) => void;

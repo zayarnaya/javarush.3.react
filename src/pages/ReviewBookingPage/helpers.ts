@@ -1,5 +1,5 @@
+import type { Passenger } from 'src/api/mockApi';
 import type { Food, Offer, Train } from 'src/api/mocks';
-import type { Passenger } from './components';
 import { fromRupees } from 'src/shared/helpers';
 
 export const getBasePrice = (train: Train, classCode: string): number => {
@@ -14,8 +14,6 @@ export const getDiscountAmount = (price: number, code: string, promocodes: Offer
   const offer = promocodes?.find((offer) => offer.code.toLowerCase() === code.toLowerCase());
 
   if (!offer) return 0;
-
-  console.log(offer);
   const minPrice = offer.discount.minPrice;
   const maxPrice = offer.discount.maxPrice ?? Infinity;
   const maximum = typeof maxPrice === 'number' ? maxPrice : fromRupees(maxPrice);
@@ -29,11 +27,36 @@ export const getDiscountAmount = (price: number, code: string, promocodes: Offer
   return 0;
 };
 
-export const getTotalFoodAmount = (meals: Record<string, number> | Passenger, food: Food[]) =>
-  Object.entries(meals).reduce((acc, [foodId, num]) => {
-    const dish = food?.find((item: Food) => item.id === +foodId);
-    if (!dish || !num) return acc;
-    const { price } = dish;
-    acc += typeof price === 'number' ? price * num : fromRupees(price) * num;
-    return acc;
-  }, 0);
+interface CountedFood extends Food {
+  count: number;
+  total: number;
+}
+
+export const getTotalFoods = (passengers: Passenger[], food: Food[]) => {
+  const meals: Record<number, CountedFood> = {};
+  for (let passenger of passengers) {
+    for (let foodId of passenger.meal) {
+      let res = meals[foodId] ?? food?.find((item: Food) => item.id === +foodId);
+      if (!res) continue;
+
+      let { count, total } = res;
+      if (!count) count = 0;
+      if (!total) total = 0;
+
+      meals[foodId] = {
+        ...res,
+        count: count++,
+        total: total + (typeof res.price === 'number' ? res.price : fromRupees(res.price)),
+      };
+    }
+  }
+
+  let total = 0;
+  for (let key in meals) {
+    total += meals[key].total;
+  }
+  return {
+    meals,
+    total,
+  };
+};

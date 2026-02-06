@@ -1,14 +1,14 @@
 import { Button, Card, Flex, Input, Typography } from 'antd';
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FocusEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { useApplyCode, useFetchFood, useFetchOffers, useFetchTrain } from 'src/api/mockApi';
+import { useApplyCode, useBooking, useFetchFood, useFetchOffers, useFetchTrain, type Passenger } from 'src/api/mockApi';
 import { StationInfo } from 'src/components';
 import { parseDate } from 'src/shared';
 import { PageLayout } from 'src/layouts';
-import { BillRow, FoodCard, OfferCard, PassengerCard, type Passenger } from './components';
+import { BillRow, FoodCard, OfferCard, PassengerCard } from './components';
 import type { Food, Offer, Train } from 'src/api/mocks';
 import style from './ReviewBookingPage.module.scss';
-import { getBasePrice, getDiscountAmount, getTotalFoodAmount } from './helpers';
+import { getBasePrice, getDiscountAmount, getTotalFoods } from './helpers';
 import { fromRupees, mapFormData } from 'src/shared/helpers';
 
 const { Title, Paragraph, Text } = Typography;
@@ -130,24 +130,23 @@ export const ReviewBookingPage = () => {
     [train, tripDetails.classCode],
   );
 
-  const mealPrice = useMemo(
-    () =>
-      passengersInfo.reduce(
-        //@ts-expect-error
-        (acc: Record<string, number>, { meal }: { meal: number[] }) => {
-          const newAcc = { ...acc };
-          for (let id of meal) {
-            if (!newAcc[`${id}`]) {
-              newAcc[id] = 0;
-            }
-            newAcc[id] += 1;
-          }
-          return newAcc;
-        },
-        {},
-      ),
-    [passengersInfo],
-  );
+  const mealPrice = useMemo(() => getTotalFoods(passengersInfo, food), [passengersInfo, food]);
+
+  const { loading: bookingLoading, error, book } = useBooking();
+
+  const handleBooking = useCallback(async () => {
+    const purchaseId = await book({
+      train,
+      passengers: passengersInfo,
+      extraBaggage,
+      classCode: tripDetails.classCode,
+      code: promocode,
+      food,
+      promocodes: offers,
+    });
+    console.log(purchaseId);
+    navigate({ pathname: '/payment', search: new URLSearchParams({ purchaseId: `${purchaseId}` }).toString() });
+  }, [train, food, offers, passengersInfo, tripDetails, extraBaggage, promocode]);
 
   return (
     <PageLayout>
@@ -232,14 +231,9 @@ export const ReviewBookingPage = () => {
           <Flex gap={4} vertical>
             <BillRow title="Base Ticket Fare" amount={basePrice} />
             {food &&
-              Object.entries(mealPrice).map(([foodId, num]) => {
-                const dish = food?.find((item: Food) => item.id === +foodId);
-                if (!dish || !num) return null;
+              Object.entries(mealPrice.meals).map(([, meal]) => {
                 return (
-                  <BillRow
-                    title={`${dish.name}${num > 1 ? ` x ${num}` : ''}`}
-                    amount={(typeof dish.price === 'string' ? fromRupees(dish.price) : dish.price) * num}
-                  />
+                  <BillRow title={`${meal.name}${meal.count > 1 ? ` x ${meal.count}` : ''}`} amount={meal.total} />
                 );
               })}
             {extraBaggage && <BillRow title="Extra Baggage" amount={500} />}
@@ -248,11 +242,7 @@ export const ReviewBookingPage = () => {
                 <BillRow
                   neg
                   title="Discount"
-                  amount={getDiscountAmount(
-                    +basePrice + +getTotalFoodAmount(mealPrice, food) + (extraBaggage ? 500 : 0),
-                    promocode,
-                    offers,
-                  )}
+                  amount={getDiscountAmount(+basePrice + mealPrice.total + (extraBaggage ? 500 : 0), promocode, offers)}
                 />
               </strong>
             )}
@@ -260,7 +250,7 @@ export const ReviewBookingPage = () => {
               <Text className={style.total}>Total Charge</Text>
               <Text
                 className={style.total}
-              >{`₹${(+basePrice + +getTotalFoodAmount(mealPrice, food) + (extraBaggage ? 500 : 0) - getDiscountAmount(+basePrice + +getTotalFoodAmount(mealPrice, food) + (extraBaggage ? 500 : 0), promocode, offers)).toFixed(2)}`}</Text>
+              >{`₹${(+basePrice + mealPrice.total + (extraBaggage ? 500 : 0) - getDiscountAmount(+basePrice + mealPrice.total + (extraBaggage ? 500 : 0), promocode, offers)).toFixed(2)}`}</Text>
             </Flex>
           </Flex>
         </Card>
@@ -271,7 +261,8 @@ export const ReviewBookingPage = () => {
               style={{ width: '400px', padding: '16px 0', height: '56px' }}
               type="primary"
               variant="solid"
-              onClick={() => navigate('/payment')}
+              onClick={handleBooking}
+              loading={bookingLoading}
             >
               Book Now
             </Button>
