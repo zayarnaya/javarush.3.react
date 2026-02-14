@@ -24,7 +24,7 @@ export const StationsContextProvider: FC<WithChildren> = ({ children }) => {
     if (!stations) {
       fetchStations();
     }
-  }, []);
+  }, [stations]);
 
   return <StationsContext.Provider value={{ stations, loading }}>{children}</StationsContext.Provider>;
 };

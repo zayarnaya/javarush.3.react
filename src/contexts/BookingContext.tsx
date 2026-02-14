@@ -1,5 +1,5 @@
-import { createContext, useState, type FC, type ReactNode } from 'react';
-import type { Passenger } from 'src/api/mockApi';
+import { createContext, useEffect, useState, type FC } from 'react';
+import { useFetchFood, useFetchOffers, type Passenger } from 'src/api/mockApi';
 import type { Food, Offer, Train } from 'src/api/mocks';
 import { getBasePrice, getDiscountAmount, getTotalFoods } from 'src/pages/ReviewBookingPage/helpers';
 import type { WithChildren } from 'src/types';
@@ -19,6 +19,8 @@ export interface BookingContextState {
   total: number | null;
   totalSum: number | null;
   passengerInfoFilled: boolean | null;
+  foodLoading: boolean;
+  offersLoading: boolean;
 }
 
 export interface BookingContextProps {
@@ -41,6 +43,8 @@ const initialBookingState = {
   total: null,
   totalSum: null,
   passengerInfoFilled: null,
+  foodLoading: false,
+  offersLoading: false,
 };
 
 export type BookingContextStateEntry = {
@@ -157,10 +161,31 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
       case 'total':
       case 'totalSum':
       case 'passengerInfoFilled':
+      case 'foodLoading':
+      case 'offersLoading':
       default:
         break;
     }
   };
+
+  const { data: foodData, loading: foodLoading, fetchFood } = useFetchFood();
+  const { data: offersData, loading: offersLoading, fetchOffers } = useFetchOffers();
+
+  useEffect(() => {
+    if (!foodData) {
+      fetchFood();
+    } else if (foodData && !foodLoading) {
+      updateState({ key: 'food', values: foodData });
+    }
+  }, [foodData, foodLoading]);
+
+  useEffect(() => {
+    if (!offersData) {
+      fetchOffers();
+    } else if (offersData && !offersLoading) {
+      updateState({ key: 'food', values: offersData });
+    }
+  }, [offersData, offersLoading]);
 
   return (
     <BookingContext.Provider
@@ -180,6 +205,8 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
           total,
           totalSum,
           passengerInfoFilled,
+          foodLoading,
+          offersLoading,
         },
         updateState,
       }}

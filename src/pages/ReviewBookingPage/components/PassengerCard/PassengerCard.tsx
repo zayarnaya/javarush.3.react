@@ -10,7 +10,7 @@ import type { Passenger } from 'src/api/mockApi';
 interface Props extends Passenger {
   onFieldChange: (e: ChangeEvent) => void;
   onDateChange: (id: number, date: Date | null) => void;
-  food: Food[];
+  food: Food[] | null;
   onFoodChange: (id: number, meal: number[]) => void;
   foodLoading: boolean;
 }

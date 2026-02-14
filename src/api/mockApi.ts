@@ -146,22 +146,30 @@ interface BookTrain {
   extraBaggage?: boolean;
   code?: string;
   classCode: string;
-  food: Food[];
-  promocodes: Offer[];
+  baseAmount: number;
+  totalFood: number;
+  totalDiscount: number;
+  totalSum: number;
+  total: number;
+  meals: any; // поправить
 }
 
 export const bookTrain = async (
-  { train, passengers, extraBaggage = false, classCode, code = '', food, promocodes }: BookTrain,
+  {
+    train,
+    passengers,
+    extraBaggage = false,
+    classCode,
+    code = '',
+    baseAmount = 0,
+    totalDiscount = 0,
+    totalFood = 0,
+    totalSum = 0,
+    total = 0,
+    meals = {},
+  }: BookTrain,
   noDelay = false,
 ): Promise<number> => {
-  const baseAmount = getBasePrice(train, classCode);
-  const { meals, total: totalFood } = getTotalFoods(passengers, food);
-
-  const total = baseAmount + totalFood + (extraBaggage ? 500 : 0);
-  const totalDiscount = getDiscountAmount(total, code, promocodes);
-
-  const totalSum = total - totalDiscount;
-
   const id = Date.now();
 
   localStorage.setItem(
@@ -173,8 +181,6 @@ export const bookTrain = async (
       extraBaggage,
       classCode,
       code,
-      food,
-      promocodes,
       meals,
       totalFood,
       baseAmount,
@@ -192,7 +198,19 @@ export const useBooking = () => {
   const [error, setError] = useState<string | null>(null);
 
   const book = async (
-    { train, passengers, extraBaggage = false, classCode, code = '', food, promocodes }: BookTrain,
+    {
+      train,
+      passengers,
+      extraBaggage = false,
+      classCode,
+      code = '',
+      baseAmount,
+      totalDiscount,
+      totalFood,
+      totalSum,
+      total,
+      meals,
+    }: BookTrain,
     noDelay = false,
   ) => {
     setLoading(true);
@@ -206,8 +224,12 @@ export const useBooking = () => {
           extraBaggage,
           classCode,
           code,
-          food,
-          promocodes,
+          baseAmount,
+          totalDiscount,
+          totalFood,
+          totalSum,
+          total,
+          meals,
         },
         noDelay,
       );

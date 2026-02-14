@@ -1,5 +1,14 @@
 import { Button, Card, Flex, Input, Typography } from 'antd';
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type FocusEvent } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FocusEvent,
+} from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useApplyCode, useBooking, useFetchFood, useFetchOffers, useFetchTrain, type Passenger } from 'src/api/mockApi';
 import { StationInfo } from 'src/components';
@@ -10,57 +19,82 @@ import type { Food, Offer, Train } from 'src/api/mocks';
 import style from './ReviewBookingPage.module.scss';
 import { getBasePrice, getDiscountAmount, getTotalFoods } from './helpers';
 import { fromRupees, mapFormData } from 'src/shared/helpers';
+import { BookingContext } from 'src/contexts/BookingContext';
+import { TicketFormContext } from 'src/contexts';
 
 const { Title, Paragraph, Text } = Typography;
 
 export const ReviewBookingPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const {
+    state: { type, passengers: passengersNo, departure, arrival, date, trainId },
+    updateState: updateTicketsState,
+    updateAllState: updateAllTicketState,
+  } = useContext(TicketFormContext);
+
   const details = Object.fromEntries(searchParams.entries());
   //@ts-expect-error
   details.date = parseDate(details.date);
+  updateAllTicketState(details);
 
-  const [passengersInfo, setPassengersInfo] = useState<Passenger[]>(
-    new Array(+details.passengers).fill(null).map((_, index) => ({
-      id: index + 1,
-      fullName: null,
-      phone: null,
-      email: null,
-      birthDate: null,
-      meal: [],
-    })),
-  );
-
-  const [tripDetails, setTripDetails] = useState(details);
-
-  const { data: train, loading, fetchTrainById } = useFetchTrain();
-  const { data: food, loading: foodLoading, fetchFood } = useFetchFood();
-  const { data: offers, loading: offersLoading, fetchOffers } = useFetchOffers();
-
-  const [promocode, setPromocode] = useState('');
-  const [promoError, setPromoError] = useState(false);
-  const [extraBaggage, setExtraBaggage] = useState(false);
-
-  const handlePromocodeChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setPromoError(false);
-      setPromocode(e.currentTarget.value);
+  const {
+    state: {
+      train,
+      passengers,
+      extraBaggage,
+      classCode,
+      code,
+      food,
+      promocodes,
+      meals,
+      totalFood,
+      baseAmount,
+      totalDiscount,
+      total,
+      totalSum,
+      passengerInfoFilled,
+      foodLoading,
+      offersLoading,
     },
-    [promocode],
-  );
+    updateState: updateBookingState,
+  } = useContext(BookingContext);
+
+  useEffect(() => {
+    if (!passengers && !!passengersNo) {
+      const passengersInfo = new Array(+details.passengers).fill(null).map((_, index) => ({
+        id: index + 1,
+        fullName: null,
+        phone: null,
+        email: null,
+        birthDate: null,
+        meal: [],
+      }));
+      updateBookingState({ key: 'passengers', values: passengersInfo });
+    }
+  }, [passengersNo, passengers]);
+
+  const { data: trainData, loading: trainLoading, fetchTrainById } = useFetchTrain();
+
+  const [promoError, setPromoError] = useState(false);
+
+  const handlePromocodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setPromoError(false);
+    updateBookingState({ key: 'code', values: e.currentTarget.value });
+  }, []);
 
   const handlePromocodeApply = useCallback(
     (id: number) => {
       setPromoError(false);
-      const offer = offers?.find((offer: Offer) => offer.id === id);
+      const offer = promocodes?.find((offer: Offer) => offer.id === id);
       if (!offer) {
         setPromoError(true);
       } else {
-        setPromocode(offer.code);
+        updateBookingState({ key: 'code', values: offer.code });
       }
     },
-    [promoError, offers],
+    [promoError, promocodes],
   );
 
   const handlePromocodeBlur = useCallback(
@@ -69,68 +103,65 @@ export const ReviewBookingPage = () => {
       const code = e.currentTarget.value?.toLowerCase();
       if (!code) return;
 
-      const offer = offers?.find((offer: Offer) => offer.code.toLowerCase() === code);
+      const offer = promocodes?.find((offer: Offer) => offer.code.toLowerCase() === code);
       if (!offer) {
         setPromoError(true);
       } else {
-        setPromocode(e.currentTarget.value);
+        updateBookingState({ key: 'code', values: e.currentTarget.value });
       }
     },
-    [promoError, offers],
+    [promoError, promocodes],
   );
 
-  const handleExtraBaggageAdd = useCallback(() => setExtraBaggage(true), []);
-  const handleExtraBaggageRemove = useCallback(() => setExtraBaggage(false), []);
+  const handleExtraBaggageAdd = useCallback(() => updateBookingState({ key: 'extraBaggage', values: true }), []);
+  const handleExtraBaggageRemove = useCallback(() => updateBookingState({ key: 'extraBaggage', values: false }), []);
 
   useEffect(() => {
-    if (tripDetails.trainId) {
-      fetchTrainById(tripDetails.trainId);
+    if (trainId) {
+      fetchTrainById(trainId);
     } else {
       navigate('/');
     }
-  }, [tripDetails.trainId]);
+  }, [trainId]);
 
   useEffect(() => {
-    if (!food) {
-      fetchFood();
+    if (trainData && !trainLoading) {
+      updateBookingState({ key: 'train', values: trainData });
     }
-  }, []);
+  }, [trainData, trainLoading]);
 
-  useEffect(() => {
-    if (!offers) {
-      fetchOffers();
-    }
-  }, []);
+  const handleFieldChange = useCallback(
+    (e: ChangeEvent) => {
+      const target = e.currentTarget as HTMLInputElement;
+      const [, id, field] = (target.getAttribute('id') ?? '').split('_');
 
-  const handleFieldChange = useCallback((e: ChangeEvent) => {
-    const target = e.currentTarget as HTMLInputElement;
-    const [, id, field] = (target.getAttribute('id') ?? '').split('_');
-
-    setPassengersInfo((prev) =>
-      prev.map((passenger) => (passenger.id === +id ? { ...passenger, [field]: target.value } : { ...passenger })),
-    );
-  }, []);
+      updateBookingState({
+        key: 'passengers',
+        values: passengers!.map((passenger) =>
+          passenger.id === +id ? { ...passenger, [field]: target.value } : { ...passenger },
+        ),
+      });
+    },
+    [passengers],
+  );
 
   const handleDateChange = useCallback((id: number, date: Date | null) => {
-    setPassengersInfo((prev) =>
-      prev.map((passenger) => (passenger.id === id ? { ...passenger, birthDate: date } : { ...passenger })),
-    );
+    updateBookingState({
+      key: 'passengers',
+      values: passengers!.map((passenger) =>
+        passenger.id === id ? { ...passenger, birthDate: date } : { ...passenger },
+      ),
+    });
   }, []);
 
   const handleFoodChange = useCallback(
     (id: number, meal: number[]) =>
-      setPassengersInfo((prev) =>
-        prev.map((passenger) => (passenger.id === id ? { ...passenger, meal } : { ...passenger })),
-      ),
+      updateBookingState({
+        key: 'passengers',
+        values: passengers!.map((passenger) => (passenger.id === id ? { ...passenger, meal } : { ...passenger })),
+      }),
     [],
   );
-
-  const basePrice = useMemo(
-    () => getBasePrice(train, tripDetails.classCode) * +tripDetails.passengers,
-    [train, tripDetails.classCode],
-  );
-
-  const mealPrice = useMemo(() => getTotalFoods(passengersInfo, food), [passengersInfo, food]);
 
   const { loading: bookingLoading, error, book } = useBooking();
 
@@ -150,32 +181,36 @@ export const ReviewBookingPage = () => {
   }, [bookingFormError]);
 
   const handleBooking = useCallback(async () => {
-    for (let passenger of passengersInfo) {
-      for (let key in passenger) {
-        //@ts-expect-error
-        if (!passenger[key]) {
-          setBookingFormError(true);
-          return;
-        }
-      }
+    if (!train || !classCode) {
+      navigate('/');
+      return;
     }
+    if (!passengers || !passengerInfoFilled) {
+      setBookingFormError(true);
+      return;
+    }
+
     const purchaseId = await book({
       train,
-      passengers: passengersInfo,
-      extraBaggage,
-      classCode: tripDetails.classCode,
-      code: promocode,
-      food,
-      promocodes: offers,
+      passengers,
+      extraBaggage: extraBaggage ?? false,
+      classCode,
+      code: code ?? '',
+      baseAmount: baseAmount ?? 0,
+      totalDiscount: totalDiscount ?? 0,
+      totalFood: totalFood ?? 0,
+      totalSum: totalSum ?? 0,
+      total: total ?? 0,
+      meals,
     });
     navigate({ pathname: '/payment', search: new URLSearchParams({ purchaseId: `${purchaseId}` }).toString() });
-  }, [train, food, offers, passengersInfo, tripDetails, extraBaggage, promocode]);
+  }, [train, passengers, extraBaggage, classCode, code, baseAmount, totalDiscount, totalFood, totalSum, total, meals]);
 
   return (
     <PageLayout>
       <Flex vertical gap={32} className={style.wrapper}>
         <Title level={1}>Review your booking</Title>
-        <Card loading={loading}>
+        <Card loading={trainLoading}>
           <Title level={4}>Boarding Details</Title>
           {train && (
             <>
@@ -183,7 +218,7 @@ export const ReviewBookingPage = () => {
                 <Title level={5}>
                   {train.trainNumber} - {train.trainName}
                 </Title>
-                <Text>Class {tripDetails.classCode} & Tatkal Quota</Text>
+                <Text>Class {classCode} & Tatkal Quota</Text>
               </Flex>
 
               <Flex justify="space-between">
@@ -203,24 +238,27 @@ export const ReviewBookingPage = () => {
             </>
           )}
         </Card>
-        {passengersInfo.map((passenger) => (
-          <PassengerCard
-            {...passenger}
-            onFieldChange={handleFieldChange}
-            onDateChange={handleDateChange}
-            food={food}
-            foodLoading={foodLoading}
-            onFoodChange={handleFoodChange}
-            key={`passenger__${passenger.id}`}
-          />
-        ))}
+        {passengers &&
+          passengers.map((passenger) => (
+            <PassengerCard
+              {...passenger}
+              onFieldChange={handleFieldChange}
+              onDateChange={handleDateChange}
+              food={food}
+              foodLoading={foodLoading}
+              onFoodChange={handleFoodChange}
+              key={`passenger__${passenger.id}`}
+            />
+          ))}
 
         <Card className={style.offers} loading={offersLoading}>
           <Title level={3} className={style['offers__title']}>
             Offers
           </Title>
-          {offers &&
-            offers.map((offer: Offer) => <OfferCard offer={offer} key={offer.id} handleClick={handlePromocodeApply} />)}
+          {promocodes &&
+            promocodes.map((offer: Offer) => (
+              <OfferCard offer={offer} key={offer.id} handleClick={handlePromocodeApply} />
+            ))}
         </Card>
 
         <div className={style.cards}>
@@ -233,7 +271,7 @@ export const ReviewBookingPage = () => {
               placeholder="Enter Code"
               onChange={handlePromocodeChange}
               onBlur={handlePromocodeBlur}
-              value={promocode}
+              value={code ?? ''}
             />
           </Card>
           <Card className={style.card}>
@@ -249,31 +287,28 @@ export const ReviewBookingPage = () => {
             </Button>
           </Card>
         </div>
-        <Card loading={loading || foodLoading || offersLoading}>
+        <Card loading={trainLoading || foodLoading || offersLoading}>
           <Title level={3}>Bill Details</Title>
           <Flex gap={4} vertical>
-            <BillRow title="Base Ticket Fare" amount={basePrice} />
-            {food &&
-              Object.entries(mealPrice.meals).map(([, meal]) => {
+            <BillRow title="Base Ticket Fare" amount={baseAmount ?? 0} />
+            {meals &&
+              Object.entries(meals).map(([, meal]) => {
                 return (
-                  <BillRow title={`${meal.name}${meal.count > 1 ? ` x ${meal.count}` : ''}`} amount={meal.total} />
+                  <BillRow
+                    title={`${meal.name}${meal.count && meal.count > 1 ? ` x ${meal.count}` : ''}`}
+                    amount={meal.total ?? 0}
+                  />
                 );
               })}
             {extraBaggage && <BillRow title="Extra Baggage" amount={500} />}
-            {promocode && !promoError && (
+            {code && !promoError && (
               <strong>
-                <BillRow
-                  neg
-                  title="Discount"
-                  amount={getDiscountAmount(+basePrice + mealPrice.total + (extraBaggage ? 500 : 0), promocode, offers)}
-                />
+                <BillRow neg title="Discount" amount={totalDiscount ?? 0} />
               </strong>
             )}
             <Flex justify="space-between">
               <Text className={style.total}>Total Charge</Text>
-              <Text
-                className={style.total}
-              >{`₹${(+basePrice + mealPrice.total + (extraBaggage ? 500 : 0) - getDiscountAmount(+basePrice + mealPrice.total + (extraBaggage ? 500 : 0), promocode, offers)).toFixed(2)}`}</Text>
+              <Text className={style.total}>{`₹${totalSum ?? 0}`}</Text>
             </Flex>
           </Flex>
         </Card>
@@ -293,7 +328,12 @@ export const ReviewBookingPage = () => {
               style={{ width: '400px', padding: '16px 0', height: '56px' }}
               variant="outlined"
               color="danger"
-              onClick={() => navigate({ pathname: '/search-results', search: mapFormData(tripDetails) })}
+              onClick={() =>
+                navigate({
+                  pathname: '/search-results',
+                  search: mapFormData({ type, passengers: passengersNo, departure, arrival, date, trainId }),
+                })
+              }
             >
               Cancel
             </Button>
