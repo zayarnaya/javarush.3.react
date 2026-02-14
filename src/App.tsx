@@ -10,6 +10,7 @@ import {
   type TicketFormValuesPartial,
 } from './contexts/TicketFormContext';
 import { useFetch } from './api/useFetch';
+import { BookingContextProvider } from './contexts/BookingContext';
 
 function App() {
   const { loading, data, fetchIt } = useFetch();
@@ -23,11 +24,13 @@ function App() {
   }, []);
 
   return (
-    <StationsContext.Provider value={stationsContext}>
-      <TicketFormContext.Provider value={formContext}>
-        <RouterProvider router={router} />
-      </TicketFormContext.Provider>
-    </StationsContext.Provider>
+    <BookingContextProvider>
+      <StationsContext.Provider value={stationsContext}>
+        <TicketFormContext.Provider value={formContext}>
+          <RouterProvider router={router} />
+        </TicketFormContext.Provider>
+      </StationsContext.Provider>
+    </BookingContextProvider>
   );
 }
 

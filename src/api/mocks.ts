@@ -1233,6 +1233,8 @@ export interface Food {
   name: string;
   price: string | number;
   image: any;
+  count?: number;
+  total?: number;
 }
 
 export const food = [

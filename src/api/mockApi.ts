@@ -15,7 +15,7 @@ export interface Passenger {
   phone: string | null;
   email: string | null;
   birthDate: any | null;
-  meal: number[];
+  meal?: number[];
 }
 
 export const mockFetch = async (type: string, noDelay = false) => {
