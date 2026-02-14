@@ -27,6 +27,8 @@ const { Title, Paragraph, Text } = Typography;
 export const ReviewBookingPage = () => {
   const navigate = useNavigate();
 
+  const [isFormSet, setIsFormSet] = useState(false);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const {
     state: { type, passengers: passengersNo, departure, arrival, date, trainId },
@@ -37,7 +39,6 @@ export const ReviewBookingPage = () => {
   const details = Object.fromEntries(searchParams.entries());
   //@ts-expect-error
   details.date = parseDate(details.date);
-  updateAllTicketState(details);
 
   const {
     state: {
@@ -74,6 +75,14 @@ export const ReviewBookingPage = () => {
       updateBookingState({ key: 'passengers', values: passengersInfo });
     }
   }, [passengersNo, passengers]);
+
+  useEffect(() => {
+    if (details && !isFormSet) {
+      updateAllTicketState(details);
+      updateBookingState({ key: 'classCode', values: details.classCode });
+      setIsFormSet(true);
+    }
+  }, [details, isFormSet]);
 
   const { data: trainData, loading: trainLoading, fetchTrainById } = useFetchTrain();
 
@@ -117,12 +126,10 @@ export const ReviewBookingPage = () => {
   const handleExtraBaggageRemove = useCallback(() => updateBookingState({ key: 'extraBaggage', values: false }), []);
 
   useEffect(() => {
-    if (trainId) {
-      fetchTrainById(trainId);
-    } else {
-      navigate('/');
+    if (details.trainId) {
+      fetchTrainById(details.trainId);
     }
-  }, [trainId]);
+  }, [details.trainId]);
 
   useEffect(() => {
     if (trainData && !trainLoading) {
@@ -145,14 +152,17 @@ export const ReviewBookingPage = () => {
     [passengers],
   );
 
-  const handleDateChange = useCallback((id: number, date: Date | null) => {
-    updateBookingState({
-      key: 'passengers',
-      values: passengers!.map((passenger) =>
-        passenger.id === id ? { ...passenger, birthDate: date } : { ...passenger },
-      ),
-    });
-  }, []);
+  const handleDateChange = useCallback(
+    (id: number, date: Date | null) => {
+      updateBookingState({
+        key: 'passengers',
+        values: passengers!.map((passenger) =>
+          passenger.id === id ? { ...passenger, birthDate: date } : { ...passenger },
+        ),
+      });
+    },
+    [passengers],
+  );
 
   const handleFoodChange = useCallback(
     (id: number, meal: number[]) =>
@@ -160,7 +170,7 @@ export const ReviewBookingPage = () => {
         key: 'passengers',
         values: passengers!.map((passenger) => (passenger.id === id ? { ...passenger, meal } : { ...passenger })),
       }),
-    [],
+    [passengers],
   );
 
   const { loading: bookingLoading, error, book } = useBooking();
@@ -297,6 +307,7 @@ export const ReviewBookingPage = () => {
                   <BillRow
                     title={`${meal.name}${meal.count && meal.count > 1 ? ` x ${meal.count}` : ''}`}
                     amount={meal.total ?? 0}
+                    key={`meal_${meal.name}`}
                   />
                 );
               })}

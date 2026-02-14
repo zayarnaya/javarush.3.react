@@ -1,5 +1,5 @@
 import { Card, DatePicker, Flex, Form, Input, Typography } from 'antd';
-import { useCallback, useState, type ChangeEvent, type FC, type MouseEvent } from 'react';
+import { useCallback, useEffect, useState, type ChangeEvent, type FC, type MouseEvent } from 'react';
 
 import style from './PassengerCard.module.scss';
 import type { Food } from 'src/api/mocks';
@@ -25,6 +25,7 @@ export const PassengerCard: FC<Props> = ({
   food,
   onFoodChange,
   foodLoading,
+  meal = [],
   ...props
 }) => {
   const handleDateChange = useCallback(
@@ -33,12 +34,9 @@ export const PassengerCard: FC<Props> = ({
     },
     [onDateChange],
   );
-
-  const [meal, setMeal] = useState<number[]>([]);
   const handleAddMeal = useCallback(
     (foodId: number) => {
       const newMeal = [...meal].concat(foodId);
-      setMeal(newMeal);
       onFoodChange(id, newMeal);
     },
     [onFoodChange, meal],
@@ -46,11 +44,11 @@ export const PassengerCard: FC<Props> = ({
   const handleRemoveMeal = useCallback(
     (foodId: number) => {
       const newMeal = [...meal].filter((item) => item !== foodId);
-      setMeal(newMeal);
       onFoodChange(id, newMeal);
     },
     [onFoodChange, meal],
   );
+
   return (
     <>
       <Card {...props} className={style.card}>

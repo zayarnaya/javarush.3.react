@@ -183,7 +183,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     if (!offersData) {
       fetchOffers();
     } else if (offersData && !offersLoading) {
-      updateState({ key: 'food', values: offersData });
+      updateState({ key: 'promocodes', values: offersData });
     }
   }, [offersData, offersLoading]);
 
