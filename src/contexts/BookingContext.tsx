@@ -2,6 +2,7 @@ import { createContext, useState, type FC, type ReactNode } from 'react';
 import type { Passenger } from 'src/api/mockApi';
 import type { Food, Offer, Train } from 'src/api/mocks';
 import { getBasePrice, getDiscountAmount, getTotalFoods } from 'src/pages/ReviewBookingPage/helpers';
+import type { WithChildren } from 'src/types';
 
 export interface BookingContextState {
   train: Train | null;
@@ -55,11 +56,7 @@ export const BookingContext = createContext<BookingContextProps>({
   updateState: (entry: BookingContextStateEntry) => {},
 });
 
-interface Props {
-  children: ReactNode;
-}
-
-export const BookingContextProvider: FC<Props> = ({ children }) => {
+export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
   const [train, setTrain] = useState<BookingContextState['train']>(initialBookingState.train);
   const [passengers, setPassengers] = useState<BookingContextState['passengers']>(initialBookingState.passengers);
   const [extraBaggage, setExtraBaggage] = useState<BookingContextState['extraBaggage']>(

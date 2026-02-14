@@ -47,7 +47,7 @@ export const useFetch = () => {
   return { data, loading, error, fetchIt };
 };
 
-export const useFetchStations = async () => {
+export const useFetchStations = () => {
   const { data, loading, error, fetchIt } = useFetch();
   const fetchStations = (noDelay = false) => fetchIt('stations', noDelay);
   return { data, loading, error, fetchStations };
