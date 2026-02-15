@@ -1,4 +1,6 @@
-import { createContext, useState, type FC } from 'react';
+import { createContext, useEffect, useState, type FC } from 'react';
+import { useSearchParams } from 'react-router';
+import { parseDate } from 'src/shared';
 import type { WithChildren } from 'src/types';
 
 export interface TicketFormState {
@@ -46,6 +48,8 @@ export const TicketFormContext = createContext<TicketFormContextProps>({
 });
 
 export const TicketFormContextProvider: FC<WithChildren> = ({ children }) => {
+  const [searchParams] = useSearchParams();
+
   const [type, setType] = useState<TicketFormState['type']>(initialFormState.type);
   const [passengers, setPassengers] = useState<TicketFormState['passengers']>(initialFormState.passengers);
   const [departure, setDeparture] = useState<TicketFormState['departure']>(initialFormState.departure);
@@ -53,6 +57,14 @@ export const TicketFormContextProvider: FC<WithChildren> = ({ children }) => {
   const [date, setDate] = useState<TicketFormState['date']>(initialFormState.date);
   const [trainId, setTrainId] = useState<TicketFormState['trainId']>(initialFormState.trainId);
   const [isFormFilled, setIsFormFilled] = useState<TicketFormState['isFormFilled']>(initialFormState.isFormFilled);
+
+  useEffect(() => {
+    console.log(searchParams?.toString());
+    if (!Object.entries(searchParams).length) return;
+    const search = Object.fromEntries(Object.entries(searchParams));
+    search.date = parseDate(search.date);
+    updateAllState(search);
+  }, [searchParams]);
 
   type FilledFormProps = Pick<TicketFormState, 'passengers' | 'departure' | 'arrival' | 'date'>;
   const updateFormFilled = ({ passengers, departure, arrival, date }: FilledFormProps) => {

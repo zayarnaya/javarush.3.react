@@ -1,24 +1,13 @@
 import { Button, Card, Flex, Input, Typography } from 'antd';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FocusEvent,
-} from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
-import { useApplyCode, useBooking, useFetchFood, useFetchOffers, useFetchTrain, type Passenger } from 'src/api/mockApi';
+import { useCallback, useContext, useEffect, useRef, useState, type ChangeEvent, type FocusEvent } from 'react';
+import { useNavigate } from 'react-router';
+import { useBooking } from 'src/api/mockApi';
 import { StationInfo } from 'src/components';
-import { parseDate } from 'src/shared';
 import { PageLayout } from 'src/layouts';
-import { BillRow, FoodCard, OfferCard, PassengerCard } from './components';
-import type { Food, Offer, Train } from 'src/api/mocks';
+import { BillRow, OfferCard, PassengerCard } from './components';
+import type { Offer } from 'src/api/mocks';
 import style from './ReviewBookingPage.module.scss';
-import { getBasePrice, getDiscountAmount, getTotalFoods } from './helpers';
-import { fromRupees, mapFormData } from 'src/shared/helpers';
+import { mapFormData } from 'src/shared/helpers';
 import { BookingContext } from 'src/contexts/BookingContext';
 import { TicketFormContext } from 'src/contexts';
 
@@ -27,18 +16,9 @@ const { Title, Paragraph, Text } = Typography;
 export const ReviewBookingPage = () => {
   const navigate = useNavigate();
 
-  const [isFormSet, setIsFormSet] = useState(false);
-
-  const [searchParams, setSearchParams] = useSearchParams();
   const {
     state: { type, passengers: passengersNo, departure, arrival, date, trainId },
-    updateState: updateTicketsState,
-    updateAllState: updateAllTicketState,
   } = useContext(TicketFormContext);
-
-  const details = Object.fromEntries(searchParams.entries());
-  //@ts-expect-error
-  details.date = parseDate(details.date);
 
   const {
     state: {
@@ -58,33 +38,10 @@ export const ReviewBookingPage = () => {
       passengerInfoFilled,
       foodLoading,
       offersLoading,
+      trainLoading,
     },
     updateState: updateBookingState,
   } = useContext(BookingContext);
-
-  useEffect(() => {
-    if (!passengers && !!passengersNo) {
-      const passengersInfo = new Array(+details.passengers).fill(null).map((_, index) => ({
-        id: index + 1,
-        fullName: null,
-        phone: null,
-        email: null,
-        birthDate: null,
-        meal: [],
-      }));
-      updateBookingState({ key: 'passengers', values: passengersInfo });
-    }
-  }, [passengersNo, passengers]);
-
-  useEffect(() => {
-    if (details && !isFormSet) {
-      updateAllTicketState(details);
-      updateBookingState({ key: 'classCode', values: details.classCode });
-      setIsFormSet(true);
-    }
-  }, [details, isFormSet]);
-
-  const { data: trainData, loading: trainLoading, fetchTrainById } = useFetchTrain();
 
   const [promoError, setPromoError] = useState(false);
 
@@ -125,18 +82,6 @@ export const ReviewBookingPage = () => {
   const handleExtraBaggageAdd = useCallback(() => updateBookingState({ key: 'extraBaggage', values: true }), []);
   const handleExtraBaggageRemove = useCallback(() => updateBookingState({ key: 'extraBaggage', values: false }), []);
 
-  useEffect(() => {
-    if (details.trainId) {
-      fetchTrainById(details.trainId);
-    }
-  }, [details.trainId]);
-
-  useEffect(() => {
-    if (trainData && !trainLoading) {
-      updateBookingState({ key: 'train', values: trainData });
-    }
-  }, [trainData, trainLoading]);
-
   const handleFieldChange = useCallback(
     (e: ChangeEvent) => {
       const target = e.currentTarget as HTMLInputElement;
@@ -165,12 +110,14 @@ export const ReviewBookingPage = () => {
   );
 
   const handleFoodChange = useCallback(
-    (id: number, meal: number[]) =>
+    (id: number, meal: number[]) => {
+      console.log(JSON.stringify(passengers));
       updateBookingState({
         key: 'passengers',
         values: passengers!.map((passenger) => (passenger.id === id ? { ...passenger, meal } : { ...passenger })),
-      }),
-    [passengers],
+      });
+    },
+    [passengers?.[0].meal],
   );
 
   const { loading: bookingLoading, error, book } = useBooking();

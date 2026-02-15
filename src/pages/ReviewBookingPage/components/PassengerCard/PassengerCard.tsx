@@ -36,17 +36,17 @@ export const PassengerCard: FC<Props> = ({
   );
   const handleAddMeal = useCallback(
     (foodId: number) => {
-      const newMeal = [...meal].concat(foodId);
+      const newMeal = [...meal, foodId];
       onFoodChange(id, newMeal);
     },
-    [onFoodChange, meal],
+    [onFoodChange, meal, id],
   );
   const handleRemoveMeal = useCallback(
     (foodId: number) => {
       const newMeal = [...meal].filter((item) => item !== foodId);
       onFoodChange(id, newMeal);
     },
-    [onFoodChange, meal],
+    [onFoodChange, meal, id],
   );
 
   return (

@@ -1,5 +1,5 @@
 import { Button, Flex, Typography } from 'antd';
-import { useCallback, type FC } from 'react';
+import { useCallback, type FC, type MouseEvent } from 'react';
 
 import style from './FoodCard.module.scss';
 import { toRupeees } from 'src/shared/helpers';
@@ -26,8 +26,20 @@ export const FoodCard: FC<Props> = ({
   isSelected,
   ...props
 }) => {
-  const onSelect = useCallback(() => handleSelectClick(id), [id]);
-  const onDeselect = useCallback(() => handleDeselectClick(id), [id]);
+  const onSelect = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      handleSelectClick(id);
+    },
+    [id],
+  );
+  const onDeselect = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      handleDeselectClick(id);
+    },
+    [id],
+  );
   return (
     <Flex vertical data-id={id} {...props}>
       <Flex className={style['image-wrapper']}>

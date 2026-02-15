@@ -1,6 +1,8 @@
 import { createContext, useEffect, useState, type FC } from 'react';
-import { useFetchFood, useFetchOffers, type Passenger } from 'src/api/mockApi';
+import { useSearchParams } from 'react-router';
+import { useFetchFood, useFetchOffers, useFetchTrain, type Passenger } from 'src/api/mockApi';
 import type { Food, Offer, Train } from 'src/api/mocks';
+import { useDebounce } from 'src/hooks';
 import { getBasePrice, getDiscountAmount, getTotalFoods } from 'src/pages/ReviewBookingPage/helpers';
 import type { WithChildren } from 'src/types';
 
@@ -21,11 +23,13 @@ export interface BookingContextState {
   passengerInfoFilled: boolean | null;
   foodLoading: boolean;
   offersLoading: boolean;
+  trainLoading: boolean;
 }
 
 export interface BookingContextProps {
   state: BookingContextState;
   updateState: (entry: BookingContextStateEntry) => void;
+  updatePassengerById: ({ id, info }: { id: number; info: Partial<Passenger> }) => void;
 }
 
 const initialBookingState = {
@@ -45,6 +49,7 @@ const initialBookingState = {
   passengerInfoFilled: null,
   foodLoading: false,
   offersLoading: false,
+  trainLoading: false,
 };
 
 export type BookingContextStateEntry = {
@@ -58,9 +63,19 @@ export const BookingContext = createContext<BookingContextProps>({
   state: initialBookingState,
   //@ts-expect-error
   updateState: (entry: BookingContextStateEntry) => {},
+  //@ts-expect-error
+  updatePassengerById: ({ id, info }: { id: number; info: Partial<Passenger> }) => {},
 });
 
 export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('passengers')) {
+      updatePassengersQuantity(Number(searchParams.get('passengers')));
+    }
+  }, [searchParams]);
+
   const [train, setTrain] = useState<BookingContextState['train']>(initialBookingState.train);
   const [passengers, setPassengers] = useState<BookingContextState['passengers']>(initialBookingState.passengers);
   const [extraBaggage, setExtraBaggage] = useState<BookingContextState['extraBaggage']>(
@@ -92,7 +107,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     let totalDiscount = 0;
 
     if (train && classCode) {
-      baseAmount = getBasePrice(train, classCode);
+      baseAmount = getBasePrice(train, classCode, passengers?.length ?? 1);
       setBaseAmount(baseAmount);
     }
 
@@ -116,6 +131,8 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     setTotalSum(totalSum);
   };
 
+  const debouncedMoneySums = useDebounce(setMoneySums);
+
   const updateState = ({ key, values }: BookingContextStateEntry) => {
     switch (key) {
       case 'train':
@@ -123,6 +140,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
         setMoneySums({ train: values, classCode, passengers, food, extraBaggage, code, promocodes });
         break;
       case 'passengers': {
+        console.log('CONTEXT', values);
         setPassengers(values);
         setPassengerInfoFilled(true);
         for (let passenger of values) {
@@ -131,7 +149,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
             break;
           }
         }
-        setMoneySums({ train, classCode, passengers: values, food, extraBaggage, code, promocodes });
+        debouncedMoneySums({ train, classCode, passengers: values, food, extraBaggage, code, promocodes });
         break;
       }
       case 'extraBaggage':
@@ -148,7 +166,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
         break;
       case 'food':
         setFood(values);
-        setMoneySums({ train, classCode, passengers, food: values, extraBaggage, code, promocodes });
+        debouncedMoneySums({ train, classCode, passengers, food: values, extraBaggage, code, promocodes });
         break;
       case 'promocodes':
         setPromocodes(values);
@@ -170,6 +188,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
 
   const { data: foodData, loading: foodLoading, fetchFood } = useFetchFood();
   const { data: offersData, loading: offersLoading, fetchOffers } = useFetchOffers();
+  const { data: trainData, loading: trainLoading, fetchTrainById } = useFetchTrain();
 
   useEffect(() => {
     if (!foodData) {
@@ -186,6 +205,55 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
       updateState({ key: 'promocodes', values: offersData });
     }
   }, [offersData, offersLoading]);
+
+  useEffect(() => {
+    if (searchParams.get('trainId') && (!train || Number(searchParams.get('trainId')) !== train.id)) {
+      fetchTrainById(Number(searchParams.get('trainId')));
+    }
+  }, [searchParams, train]);
+
+  useEffect(() => {
+    if (trainData && (!train || (train && trainData.id !== train.id)) && !trainLoading) {
+      updateState({ key: 'train', values: trainData });
+    }
+  }, [train, trainData, trainLoading]);
+
+  useEffect(() => {
+    if (searchParams.get('classCode')) {
+      updateState({ key: 'classCode', values: searchParams.get('classCode') ?? '' });
+    }
+  }, [searchParams]);
+
+  function updatePassengerById({ id, info }: { id: number; info: Partial<Passenger> }) {
+    updateState({
+      key: 'passengers',
+      values: (passengers ? [...passengers] : []).map((passenger) =>
+        passenger.id === id ? { ...passenger, ...info } : { ...passenger },
+      ),
+    });
+  }
+
+  const newPassenger: Omit<Passenger, 'id' | 'meal'> = {
+    fullName: null,
+    phone: null,
+    email: null,
+    birthDate: null,
+  };
+
+  function updatePassengersQuantity(q: number) {
+    if (!passengers) {
+      setPassengers(new Array(q).fill(null).map((_, index) => ({ ...newPassenger, id: index + 1, meal: new Array() })));
+    } else if (passengers.length < q) {
+      const newArray = new Array(q - passengers.length)
+        .fill(null)
+        .map((_, index) => ({ ...newPassenger, id: index + q + 1, meal: new Array() }));
+      setPassengers([...passengers, ...newArray]);
+    } else if (passengers.length > q) {
+      setPassengers(passengers.slice(0, q));
+    } else {
+      return;
+    }
+  }
 
   return (
     <BookingContext.Provider
@@ -207,8 +275,10 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
           passengerInfoFilled,
           foodLoading,
           offersLoading,
+          trainLoading,
         },
         updateState,
+        updatePassengerById,
       }}
     >
       {children}
