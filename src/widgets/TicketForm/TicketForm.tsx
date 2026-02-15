@@ -1,48 +1,64 @@
-import { useCallback, useEffect, useState, type FC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState, type ChangeEvent, type FC } from 'react';
 import { Button, Radio, InputNumber, Form, Select, DatePicker, type RadioChangeEvent, Flex, Typography } from 'antd';
 
 import style from './TicketForm.module.scss';
+import { StationsContext, TicketFormContext } from 'src/contexts';
+import dayjs from 'dayjs';
 
 interface Props {
-  stationList: { label: string; value: string }[];
-  handleFinish: (e: RadioChangeEvent) => void;
-  stationsIsLoading: boolean;
-  initialValues: Record<string, any>;
+  handleSubmit: (searchString: string) => void;
   formType?: 'search' | 'result';
 }
 
 const { Title } = Typography;
 
-export const TicketForm: FC<Props> = ({
-  stationList,
-  handleFinish,
-  stationsIsLoading,
-  initialValues,
-  formType = 'search',
-}) => {
-  const [tripType, setTripType] = useState(initialValues?.type ?? 'round');
+export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => {
+  const { stations, loading: stationsIsLoading } = useContext(StationsContext);
+
+  const stationList = useMemo(
+    () => stations && stations.map(({ name, code }: { name: string; code: string }) => ({ label: name, value: code })),
+    [stations],
+  );
+
+  const {
+    state: { type, passengers, departure, arrival, date, trainId, isFormFilled },
+    updateState,
+    updateAllState,
+  } = useContext(TicketFormContext);
 
   const [departureList, setDepartureList] = useState<typeof stationList>([]);
-  const [departureStation, setDepartureStation] = useState<{ label: string; value: string } | undefined>(undefined);
   const [arrivalList, setArrivalList] = useState<typeof stationList>([]);
-  const [arrivalStation, setArrivalStation] = useState<{ label: string; value: string } | undefined>(undefined);
 
   const handleDepartureChange = useCallback(
     (value: string) => {
-      setDepartureStation(stationList.find((station) => station.value === value));
-      setArrivalList(stationList.filter((station) => value !== station.value));
+      updateState({ key: 'departure', values: stationList?.find((station) => station.value === value)?.value ?? '' });
+      setArrivalList(stationList?.filter((station) => value !== station.value) ?? []);
     },
-    [stationList, arrivalList, departureStation],
+    [stationList, arrivalList, departure],
   );
   const handleArrivalChange = useCallback(
     (value: string) => {
-      setArrivalStation(stationList.find((station) => station.value === value));
-      setDepartureList(stationList.filter((station) => value !== station.value));
+      updateState({ key: 'arrival', values: stationList?.find((station) => station.value === value)?.value ?? '' });
+      setDepartureList(stationList?.filter((station) => value !== station.value) ?? []);
     },
-    [stationList, departureList, arrivalStation],
+    [stationList, departureList, arrival],
   );
 
-  const handleTripTypeChange = useCallback((e: RadioChangeEvent) => setTripType(e.target.value), []);
+  const handleTripTypeChange = useCallback(
+    (e: RadioChangeEvent) => updateState({ key: 'type', values: e.target.value }),
+    [],
+  );
+
+  const handleDateChange = useCallback(
+    (date: any) => updateState({ key: 'date', values: [date?.valueOf() ?? ''] }),
+    [],
+  );
+
+  const handleRangeChange = useCallback(
+    (dates: any[] | null) =>
+      updateState({ key: 'date', values: dates?.map((date) => date?.valueOf() ?? null) }) ?? null,
+    [],
+  );
 
   useEffect(() => {
     if (stationList && !stationsIsLoading) {
@@ -50,8 +66,25 @@ export const TicketForm: FC<Props> = ({
       setArrivalList(stationList);
     }
   }, [stationList, stationsIsLoading]);
+
+  const handleFinish = useCallback(
+    (values: Record<string, any>) => {
+      const search = new URLSearchParams({ ...values, date: values.date.map((item: any) => item?.valueOf() ?? null) });
+      handleSubmit(search.toString());
+    },
+    [handleSubmit],
+  );
   return (
-    <Form onFinish={handleFinish} initialValues={initialValues}>
+    <Form
+      onFinish={handleFinish}
+      initialValues={{
+        type: type ?? 'round',
+        passengers: passengers ?? 1,
+        departure: departure ?? '',
+        arrival: arrival ?? '',
+        date: date?.map((value) => dayjs(new Date(value))) ?? null,
+      }}
+    >
       <Flex vertical className={style['form-wrapper']}>
         <Flex className={style['type-wrapper']}>
           <Form.Item label={null} name="type" rules={[{ required: true, message: 'Please select the trip type!' }]}>
@@ -68,7 +101,14 @@ export const TicketForm: FC<Props> = ({
             name="passengers"
             rules={[{ required: true, message: 'Select the number of passengers!' }]}
           >
-            <InputNumber mode="spinner" step={1} min={0} max={25} />
+            <InputNumber
+              mode="spinner"
+              step={1}
+              min={0}
+              max={25}
+              onChange={(value: any) => updateState({ key: 'passengers', values: value })}
+              value={passengers ?? 0}
+            />
           </Form.Item>
         </Flex>
         <div className={style['station-wrapper']}>
@@ -81,12 +121,11 @@ export const TicketForm: FC<Props> = ({
             >
               <Select
                 loading={stationsIsLoading}
-                options={departureList}
+                options={departureList ?? []}
                 showSearch={{ optionFilterProp: 'label' }}
                 placeholder="Select a station"
                 onChange={handleDepartureChange}
-                //@ts-expect-error
-                value={departureStation}
+                value={departure}
                 allowClear
               />
             </Form.Item>
@@ -96,12 +135,11 @@ export const TicketForm: FC<Props> = ({
             <Form.Item label={null} name="arrival" rules={[{ required: true, message: 'Select the arrival station!' }]}>
               <Select
                 loading={stationsIsLoading}
-                options={arrivalList}
+                options={arrivalList ?? []}
                 showSearch={{ optionFilterProp: 'label' }}
                 placeholder="Select a station"
                 onChange={handleArrivalChange}
-                //@ts-expect-error
-                value={arrivalStation}
+                value={arrival}
                 allowClear
               />
             </Form.Item>
@@ -114,10 +152,18 @@ export const TicketForm: FC<Props> = ({
           className={style['date-wrapper']}
           rules={[{ required: true, message: 'Please select date!' }]}
         >
-          {tripType === 'one-way' ? (
-            <DatePicker className={style.datePicker} />
+          {type === 'one-way' ? (
+            <DatePicker
+              className={style.datePicker}
+              onChange={handleDateChange}
+              value={date?.[0] ? dayjs(new Date(date[0])) : null}
+            />
           ) : (
-            <DatePicker.RangePicker className={style.datePicker} />
+            <DatePicker.RangePicker
+              className={style.datePicker}
+              onChange={handleRangeChange}
+              value={date ? [dayjs(new Date(date[0])), dayjs(new Date(date[1]))] : null}
+            />
           )}
         </Form.Item>
         <Flex justify="center">

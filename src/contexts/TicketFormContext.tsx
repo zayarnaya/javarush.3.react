@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState, type FC } from 'react';
 import { useSearchParams } from 'react-router';
-import { parseDate } from 'src/shared';
 import type { WithChildren } from 'src/types';
 
 export interface TicketFormState {
@@ -8,7 +7,7 @@ export interface TicketFormState {
   passengers: number | null;
   departure: string | null;
   arrival: string | null;
-  date: string[] | null;
+  date: number[] | null;
   trainId: number | null;
   isFormFilled: boolean;
 }
@@ -59,11 +58,15 @@ export const TicketFormContextProvider: FC<WithChildren> = ({ children }) => {
   const [isFormFilled, setIsFormFilled] = useState<TicketFormState['isFormFilled']>(initialFormState.isFormFilled);
 
   useEffect(() => {
-    console.log(searchParams?.toString());
-    if (!Object.entries(searchParams).length) return;
-    const search = Object.fromEntries(Object.entries(searchParams));
-    search.date = parseDate(search.date);
-    updateAllState(search);
+    try {
+      const search = Object.fromEntries(searchParams.entries());
+      //@ts-expect-error
+      search.date = search.date.split(',').map(Number);
+      updateAllState(search);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
   }, [searchParams]);
 
   type FilledFormProps = Pick<TicketFormState, 'passengers' | 'departure' | 'arrival' | 'date'>;
@@ -102,11 +105,16 @@ export const TicketFormContextProvider: FC<WithChildren> = ({ children }) => {
         updateFormFilled({ passengers, departure, arrival: values?.toString() ?? null, date });
         break;
       case 'date':
-        if (typeof values === 'string' || typeof values === 'number' || !values || !Array.isArray(values)) {
-          values = ['', ''];
+        if (!values) {
+          values = null;
+        } else if (typeof values === 'string') {
+          values = (values as string).split(',').slice(0, 2);
+        } else if (Array.isArray(values)) {
+          //@ts-expect-error
+          values = values.slice(0, 2).map(Number) as number[];
         }
-        setDate(values);
-        updateFormFilled({ passengers, departure, arrival, date: values });
+        setDate(values as TicketFormState['date']);
+        updateFormFilled({ passengers, departure, arrival, date: values as TicketFormState['date'] });
         break;
       case 'trainId':
         if (values && typeof values !== 'number') {
@@ -123,6 +131,7 @@ export const TicketFormContextProvider: FC<WithChildren> = ({ children }) => {
   }
 
   function updateAllState(state: Record<string, string | number | string[] | null | undefined>) {
+    console.log('UPDATE STATE');
     for (let key in state) {
       if (key in initialFormState) {
         updateState({ key: key as keyof TicketFormState, values: state[key as keyof TicketFormState] });

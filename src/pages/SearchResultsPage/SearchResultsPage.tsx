@@ -1,43 +1,32 @@
 import { Card, Flex, Typography } from 'antd';
-import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { Banner, TicketForm, TrainCard } from 'src/widgets';
 import { useNavigate, useSearchParams } from 'react-router';
-import { StationsContext } from 'src/contexts/StationsContext';
 import { PageLayout } from 'src/layouts';
 import banner1 from '@images/banner1.png';
 import banner2 from '@images/banner2.png';
 import { useFetchTrains } from 'src/api/mockApi';
 import type { Train } from 'src/api/mocks';
-import { mapFormData, parseDate } from 'src/shared';
+import { TicketFormContext } from 'src/contexts';
 
 const { Title, Paragraph } = Typography;
 
 export const SearchResultsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const initialValues = Object.fromEntries(searchParams.entries());
-  //@ts-expect-error
-  initialValues.date = parseDate(initialValues.date);
-
-  const { stations, loading } = useContext(StationsContext);
-
-  const stationList = useMemo(
-    () => stations && stations.map(({ name, code }: { name: string; code: string }) => ({ label: name, value: code })),
-    [stations],
-  );
-
+  const {
+    state: { arrival, departure },
+  } = useContext(TicketFormContext);
   const { data: trains, loading: trainsLoading, fetchTrains } = useFetchTrains();
 
   useEffect(() => {
-    fetchTrains(initialValues.departure, initialValues.arrival);
+    fetchTrains(departure ?? '', arrival ?? '');
   }, []);
 
-  const handleFinish = useCallback(
-    (values: Record<string, any>) => {
-      console.log(values);
-      const newSearchParams = new URLSearchParams(mapFormData(values));
+  const handleSubmit = useCallback(
+    (searchString: string) => {
+      const newSearchParams = new URLSearchParams(searchString);
       setSearchParams(newSearchParams, { replace: true });
-      fetchTrains(values.departure, values.arrival);
+      fetchTrains(departure ?? '', arrival ?? '');
     },
     [searchParams],
   );
@@ -50,13 +39,7 @@ export const SearchResultsPage = () => {
   return (
     <PageLayout>
       <Title level={1}>Search results</Title>
-      <TicketForm
-        initialValues={initialValues}
-        handleFinish={handleFinish}
-        stationsIsLoading={loading}
-        formType="result"
-        stationList={stationList ?? []}
-      />
+      <TicketForm handleSubmit={handleSubmit} formType="result" />
       <Flex vertical gap={34}>
         <Banner text="Planning your holidays" image={banner1} />
         <Banner text="Train tourism packages" image={banner2} />
