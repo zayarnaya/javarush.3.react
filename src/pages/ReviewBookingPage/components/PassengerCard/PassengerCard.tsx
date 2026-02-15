@@ -1,61 +1,37 @@
 import { Card, DatePicker, Flex, Form, Input, Typography } from 'antd';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ChangeEvent,
-  type FC,
-  type MouseEvent,
-} from 'react';
+import { useCallback, useContext, useMemo, type ChangeEvent, type FC } from 'react';
 
 import style from './PassengerCard.module.scss';
 import type { Food } from 'src/api/mocks';
 import { FoodCard } from '../FoodCard/FoodCard';
 import { Link } from 'react-router';
-import type { Passenger } from 'src/api/mockApi';
 import dayjs from 'dayjs';
 import { BookingContext } from 'src/contexts';
 
 interface Props {
   id: number;
-  onFieldChange: (e: ChangeEvent) => void;
-  onDateChange: (id: number, date: Date | null) => void;
-  onFoodChange: (id: number, meal: number[]) => void;
 }
 
 const { Item } = Form;
 const { Title, Text } = Typography;
 
-export const PassengerCard: FC<Props> = ({ id, onFieldChange, onDateChange, onFoodChange, ...props }) => {
-  // const handleDateChange = useCallback(
-  //   (date: any | null) => {
-  //     onDateChange(id, date);
-  //   },
-  //   [onDateChange],
-  // );
-  // const handleAddMeal = useCallback(
-  //   (foodId: number) => {
-  //     const newMeal = [...meal, foodId];
-  //     onFoodChange(id, newMeal);
-  //   },
-  //   [onFoodChange, meal, id],
-  // );
-  // const handleRemoveMeal = useCallback(
-  //   (foodId: number) => {
-  //     const newMeal = [...meal].filter((item) => item !== foodId);
-  //     onFoodChange(id, newMeal);
-  //   },
-  //   [onFoodChange, meal, id],
-  // );
-
+export const PassengerCard: FC<Props> = ({ id, ...props }) => {
   const {
     state: { passengers, food, foodLoading },
     updatePassengerById,
   } = useContext(BookingContext);
 
   const passenger = useMemo(() => passengers?.find((pass) => pass.id === id), [passengers]);
+
+  const handleFieldChange = useCallback(
+    (e: ChangeEvent) => {
+      const target = e.currentTarget as HTMLInputElement;
+      const [, , field] = (target.getAttribute('id') ?? '').split('_');
+
+      updatePassengerById({ id, info: { ...passenger, [field]: target.value } });
+    },
+    [passengers],
+  );
 
   const handleDateChange = (date: any) =>
     updatePassengerById({
@@ -88,19 +64,19 @@ export const PassengerCard: FC<Props> = ({ id, onFieldChange, onDateChange, onFo
           <Flex vertical>
             <Text>Full Name</Text>
             <Item name="fullName" rules={[{ required: true, message: "Please fill in passenger's name" }]}>
-              <Input placeholder="Your name" onChange={onFieldChange} value={passenger.fullName ?? ''} />
+              <Input placeholder="Your name" onChange={handleFieldChange} value={passenger.fullName ?? ''} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Phone Number</Text>
             <Item name="phone" rules={[{ required: true, message: "Please fill in passenger's phone number" }]}>
-              <Input placeholder="+91" onChange={onFieldChange} value={passenger.phone ?? ''} />
+              <Input placeholder="+91" onChange={handleFieldChange} value={passenger.phone ?? ''} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Email</Text>
             <Item name="email" rules={[{ required: true, message: "Please fill in passenger's e-mail" }]}>
-              <Input placeholder="john.doe@company.com" onChange={onFieldChange} value={passenger.email ?? ''} />
+              <Input placeholder="john.doe@company.com" onChange={handleFieldChange} value={passenger.email ?? ''} />
             </Item>
           </Flex>
           <Flex vertical>

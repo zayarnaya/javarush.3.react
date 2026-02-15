@@ -27,7 +27,6 @@ export const ReviewBookingPage = () => {
       extraBaggage,
       classCode,
       code,
-      food,
       promocodes,
       meals,
       totalFood,
@@ -81,63 +80,6 @@ export const ReviewBookingPage = () => {
 
   const handleExtraBaggageAdd = useCallback(() => updateBookingState({ key: 'extraBaggage', values: true }), []);
   const handleExtraBaggageRemove = useCallback(() => updateBookingState({ key: 'extraBaggage', values: false }), []);
-
-  const handleFieldChange = useCallback(
-    (e: ChangeEvent) => {
-      const target = e.currentTarget as HTMLInputElement;
-      const [, id, field] = (target.getAttribute('id') ?? '').split('_');
-
-      updateBookingState({
-        key: 'passengers',
-        values: passengers!.map((passenger) =>
-          passenger.id === +id ? { ...passenger, [field]: target.value } : { ...passenger },
-        ),
-      });
-    },
-    [passengers],
-  );
-
-  const handleDateChange = useCallback(
-    (id: number, date: Date | null) => {
-      updateBookingState({
-        key: 'passengers',
-        values: passengers!.map((passenger) =>
-          passenger.id === id ? { ...passenger, birthDate: date } : { ...passenger },
-        ),
-      });
-    },
-    [passengers],
-  );
-
-  const handleFoodChange = useCallback(
-    (id: number, meal: number[]) => {
-      updateBookingState({
-        key: 'passengers',
-        values: passengers!.map((passenger) =>
-          passenger.id === id ? { ...passenger, meal: [...meal] } : { ...passenger },
-        ),
-      });
-    },
-    [
-      train,
-      passengers,
-      extraBaggage,
-      classCode,
-      code,
-      food,
-      promocodes,
-      meals,
-      totalFood,
-      baseAmount,
-      totalDiscount,
-      total,
-      totalSum,
-      passengerInfoFilled,
-      foodLoading,
-      offersLoading,
-      trainLoading,
-    ],
-  );
 
   const { loading: bookingLoading, error, book } = useBooking();
 
@@ -215,15 +157,7 @@ export const ReviewBookingPage = () => {
           )}
         </Card>
         {passengers &&
-          passengers.map((passenger) => (
-            <PassengerCard
-              id={passenger.id}
-              onFieldChange={handleFieldChange}
-              onDateChange={handleDateChange}
-              onFoodChange={handleFoodChange}
-              key={`passenger__${passenger.id}`}
-            />
-          ))}
+          passengers.map((passenger) => <PassengerCard id={passenger.id} key={`passenger__${passenger.id}`} />)}
 
         <Card className={style.offers} loading={offersLoading}>
           <Title level={3} className={style['offers__title']}>
@@ -316,6 +250,11 @@ export const ReviewBookingPage = () => {
               {bookingFormError && (
                 <Text type="danger" style={{ transition: 'all ease .5s' }}>
                   Fill out Passenger Data, please!
+                </Text>
+              )}
+              {error && (
+                <Text type="danger" style={{ transition: 'all ease .5s' }}>
+                  Some error occured during booking, try again later!
                 </Text>
               )}
             </Flex>
