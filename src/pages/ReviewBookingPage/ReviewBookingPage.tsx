@@ -1,17 +1,17 @@
-import { Button, Card, Flex, Input, Typography } from 'antd';
+import { Button, Card, Flex, Typography } from 'antd';
 import { useCallback, useContext, useEffect, useRef, useState, type ChangeEvent, type FocusEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { useBooking } from 'src/api/mockApi';
-import { StationInfo } from 'src/components';
 import { PageLayout } from 'src/layouts';
-import { BillRow, OfferCard, PassengerCard } from './components';
 import type { Offer } from 'src/api/mocks';
 import style from './ReviewBookingPage.module.scss';
 import { mapFormData } from 'src/shared/helpers';
 import { BookingContext } from 'src/contexts/BookingContext';
 import { TicketFormContext } from 'src/contexts';
+import { StationInfo } from 'src/components';
+import { BillDetails, OfferAndBaggage, OffersList, PassengerCard } from 'src/widgets';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 
 export const ReviewBookingPage = () => {
   const navigate = useNavigate();
@@ -35,8 +35,6 @@ export const ReviewBookingPage = () => {
       total,
       totalSum,
       passengerInfoFilled,
-      foodLoading,
-      offersLoading,
       trainLoading,
     },
     updateState: updateBookingState,
@@ -77,9 +75,6 @@ export const ReviewBookingPage = () => {
     },
     [promoError, promocodes],
   );
-
-  const handleExtraBaggageAdd = useCallback(() => updateBookingState({ key: 'extraBaggage', values: true }), []);
-  const handleExtraBaggageRemove = useCallback(() => updateBookingState({ key: 'extraBaggage', values: false }), []);
 
   const { loading: bookingLoading, error, book } = useBooking();
 
@@ -159,68 +154,16 @@ export const ReviewBookingPage = () => {
         {passengers &&
           passengers.map((passenger) => <PassengerCard id={passenger.id} key={`passenger__${passenger.id}`} />)}
 
-        <Card className={style.offers} loading={offersLoading}>
-          <Title level={3} className={style['offers__title']}>
-            Offers
-          </Title>
-          {promocodes &&
-            promocodes.map((offer: Offer) => (
-              <OfferCard offer={offer} key={offer.id} handleClick={handlePromocodeApply} />
-            ))}
-        </Card>
+        <OffersList handlePromocodeApply={handlePromocodeApply} />
 
-        <div className={style.cards}>
-          <Card className={style.card}>
-            <Title level={3}>Apply Code</Title>
-            <div className={style['promo-error']}>
-              {promoError && <Paragraph type="danger">There is no such promocode! Try using another.</Paragraph>}
-            </div>
-            <Input
-              placeholder="Enter Code"
-              onChange={handlePromocodeChange}
-              onBlur={handlePromocodeBlur}
-              value={code ?? ''}
-            />
-          </Card>
-          <Card className={style.card}>
-            <Title level={3}>Extra Baggage</Title>
-            <div className={style['promo-error']}></div>
-            <Button
-              color="default"
-              variant="outlined"
-              className={style['card__button']}
-              onClick={extraBaggage ? handleExtraBaggageRemove : handleExtraBaggageAdd}
-            >
-              {extraBaggage ? 'Remove from Ticket' : 'Add to Ticket'}
-            </Button>
-          </Card>
-        </div>
-        <Card loading={trainLoading || foodLoading || offersLoading}>
-          <Title level={3}>Bill Details</Title>
-          <Flex gap={4} vertical>
-            <BillRow title="Base Ticket Fare" amount={baseAmount ?? 0} />
-            {meals &&
-              Object.entries(meals).map(([, meal]) => {
-                return (
-                  <BillRow
-                    title={`${meal.name}${meal.count && meal.count > 1 ? ` x ${meal.count}` : ''}`}
-                    amount={meal.total ?? 0}
-                    key={`meal_${meal.name}`}
-                  />
-                );
-              })}
-            {extraBaggage && <BillRow title="Extra Baggage" amount={500} />}
-            {code && !promoError && (
-              <strong>
-                <BillRow neg title="Discount" amount={totalDiscount ?? 0} />
-              </strong>
-            )}
-            <Flex justify="space-between">
-              <Text className={style.total}>Total Charge</Text>
-              <Text className={style.total}>{`₹${totalSum ?? 0}`}</Text>
-            </Flex>
-          </Flex>
-        </Card>
+        <OfferAndBaggage
+          promoError={promoError}
+          handlePromocodeChange={handlePromocodeChange}
+          handlePromocodeBlur={handlePromocodeBlur}
+        />
+
+        <BillDetails promoError={promoError} />
+
         <Card variant="borderless" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
           <Flex vertical align="center" gap={16}>
             <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
