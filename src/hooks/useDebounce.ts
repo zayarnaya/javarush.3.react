@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 
 export const useDebounce = (func: Function, delay = 500) => {
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const argsRef = useRef<Record<string, any>[]>(null);
 
   useEffect(() => {
     return () => {
@@ -12,10 +13,11 @@ export const useDebounce = (func: Function, delay = 500) => {
   }, []);
 
   function debounced(...args: any) {
-    timerRef.current = setTimeout(onTime, delay, args);
+    timerRef.current = setTimeout(onTime, delay);
+    argsRef.current = args;
 
-    function onTime(...args: any) {
-      return func.apply(null, args);
+    function onTime() {
+      return func.apply(null, argsRef.current);
     }
   }
 

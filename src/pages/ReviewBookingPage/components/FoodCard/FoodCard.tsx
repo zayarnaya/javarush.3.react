@@ -45,20 +45,20 @@ export const FoodCard: FC<Props> = ({
       <Flex className={style['image-wrapper']}>
         <img src={image} alt={name} className={style.image} />
       </Flex>
-      <Flex vertical className={style['info-wrapper']}>
+      <Flex vertical className={style['info-wrapper']} justify="space-between" gap={12}>
         <Title level={5} className={style.title} ellipsis>
           {name}
         </Title>
         <Text>{typeof price === 'number' ? toRupeees(price) : price}</Text>
         {!isSelected && (
-          <Button variant="outlined" onClick={onSelect}>
+          <div className={style.selectButton} onClick={() => handleSelectClick(id)}>
             Add to ticket
-          </Button>
+          </div>
         )}
         {isSelected && (
-          <Button variant="outlined" danger onClick={onDeselect}>
-            Remove from ticket
-          </Button>
+          <div className={style.deselectButton} onClick={() => handleDeselectClick(id)}>
+            Remove{' '}
+          </div>
         )}
       </Flex>
     </Flex>

@@ -111,13 +111,32 @@ export const ReviewBookingPage = () => {
 
   const handleFoodChange = useCallback(
     (id: number, meal: number[]) => {
-      console.log(JSON.stringify(passengers));
       updateBookingState({
         key: 'passengers',
-        values: passengers!.map((passenger) => (passenger.id === id ? { ...passenger, meal } : { ...passenger })),
+        values: passengers!.map((passenger) =>
+          passenger.id === id ? { ...passenger, meal: [...meal] } : { ...passenger },
+        ),
       });
     },
-    [passengers?.[0].meal],
+    [
+      train,
+      passengers,
+      extraBaggage,
+      classCode,
+      code,
+      food,
+      promocodes,
+      meals,
+      totalFood,
+      baseAmount,
+      totalDiscount,
+      total,
+      totalSum,
+      passengerInfoFilled,
+      foodLoading,
+      offersLoading,
+      trainLoading,
+    ],
   );
 
   const { loading: bookingLoading, error, book } = useBooking();
@@ -198,11 +217,9 @@ export const ReviewBookingPage = () => {
         {passengers &&
           passengers.map((passenger) => (
             <PassengerCard
-              {...passenger}
+              id={passenger.id}
               onFieldChange={handleFieldChange}
               onDateChange={handleDateChange}
-              food={food}
-              foodLoading={foodLoading}
               onFoodChange={handleFoodChange}
               key={`passenger__${passenger.id}`}
             />

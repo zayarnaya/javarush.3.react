@@ -149,7 +149,17 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
             break;
           }
         }
-        debouncedMoneySums({ train, classCode, passengers: values, food, extraBaggage, code, promocodes });
+        // пересчитывать нужно только если изменяется еда
+        // чортова еда, да что с тобой не так
+        debouncedMoneySums({
+          train: { ...train },
+          classCode,
+          passengers: [...values],
+          food,
+          extraBaggage,
+          code,
+          promocodes,
+        });
         break;
       }
       case 'extraBaggage':
@@ -166,7 +176,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
         break;
       case 'food':
         setFood(values);
-        debouncedMoneySums({ train, classCode, passengers, food: values, extraBaggage, code, promocodes });
+        setMoneySums({ train, classCode, passengers, food: values, extraBaggage, code, promocodes });
         break;
       case 'promocodes':
         setPromocodes(values);
@@ -240,13 +250,17 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     birthDate: null,
   };
 
+  const emptyArray: number[] = [];
+
   function updatePassengersQuantity(q: number) {
     if (!passengers) {
-      setPassengers(new Array(q).fill(null).map((_, index) => ({ ...newPassenger, id: index + 1, meal: new Array() })));
+      setPassengers(
+        new Array(q).fill(null).map((_, index) => ({ ...newPassenger, id: index + 1, meal: [...emptyArray] })),
+      );
     } else if (passengers.length < q) {
       const newArray = new Array(q - passengers.length)
         .fill(null)
-        .map((_, index) => ({ ...newPassenger, id: index + q + 1, meal: new Array() }));
+        .map((_, index) => ({ ...newPassenger, id: index + q + 1, meal: [...emptyArray] }));
       setPassengers([...passengers, ...newArray]);
     } else if (passengers.length > q) {
       setPassengers(passengers.slice(0, q));
