@@ -7,13 +7,9 @@ import style from './BillDetails.module.scss';
 
 const { Title, Text } = Typography;
 
-interface Props {
-  promoError: boolean;
-}
-
-export const BillDetails: FC<Props> = ({ promoError = false }) => {
+export const BillDetails: FC = () => {
   const {
-    state: { extraBaggage, code, meals, baseAmount, totalDiscount, totalSum, foodLoading, offersLoading, trainLoading },
+    state: { extraBaggage, meals, baseAmount, totalDiscount, totalSum, foodLoading, offersLoading, trainLoading },
   } = useContext(BookingContext);
   return (
     <Card loading={trainLoading || foodLoading || offersLoading}>
@@ -31,7 +27,7 @@ export const BillDetails: FC<Props> = ({ promoError = false }) => {
             );
           })}
         {extraBaggage && <BillRow title="Extra Baggage" amount={500} />}
-        {code && !promoError && (
+        {totalDiscount && (
           <strong>
             <BillRow neg title="Discount" amount={totalDiscount ?? 0} />
           </strong>

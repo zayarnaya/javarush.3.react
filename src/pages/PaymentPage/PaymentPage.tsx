@@ -8,10 +8,10 @@ import { DetailsLayout, PageLayout } from 'src/layouts';
 import style from './PaymentPage.module.scss';
 import { BoardingDetails } from 'src/widgets/BoardingDetails/BoardingDetails';
 import { TravellerDetails } from 'src/widgets/TravellerDetails/TravellerDetails';
-import { BillDetails, OfferAndBaggage, OffersList, PaymentMethods } from 'src/widgets';
-import type { Offer } from 'src/api/mocks';
+import { BillDetails, PaymentMethods } from 'src/widgets';
 
 import shield from '@images/save.svg';
+import { Offers } from 'src/widgets/Offers/Offers';
 
 const { Title, Text } = Typography;
 
@@ -20,12 +20,7 @@ export const PaymentPage: FC = () => {
   const navigate = useNavigate();
   const { data, loading, fetchPaymentDetails } = useFetchPaymentDetails();
   const {
-    state: {
-      promocodes,
-
-      totalSum,
-    },
-    updateState,
+    state: { totalSum },
     updateAllState,
   } = useContext(BookingContext);
 
@@ -47,42 +42,6 @@ export const PaymentPage: FC = () => {
     }
   }, [data, loading]);
 
-  const [promoError, setPromoError] = useState(false);
-
-  const handlePromocodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setPromoError(false);
-    updateState({ key: 'code', values: e.currentTarget.value });
-  }, []);
-
-  const handlePromocodeApply = useCallback(
-    (id: number) => {
-      setPromoError(false);
-      const offer = promocodes?.find((offer: Offer) => offer.id === id);
-      if (!offer) {
-        setPromoError(true);
-      } else {
-        updateState({ key: 'code', values: offer.code });
-      }
-    },
-    [promoError, promocodes],
-  );
-
-  const handlePromocodeBlur = useCallback(
-    (e: FocusEvent<HTMLInputElement>) => {
-      setPromoError(false);
-      const code = e.currentTarget.value?.toLowerCase();
-      if (!code) return;
-
-      const offer = promocodes?.find((offer: Offer) => offer.code.toLowerCase() === code);
-      if (!offer) {
-        setPromoError(true);
-      } else {
-        updateState({ key: 'code', values: e.currentTarget.value });
-      }
-    },
-    [promoError, promocodes],
-  );
-
   const [activeMethod, setActiveMethod] = useState('1');
   const updateActiveMethod = (key: string) => setActiveMethod(key);
 
@@ -98,15 +57,10 @@ export const PaymentPage: FC = () => {
           <BoardingDetails loading={loading} inset />
           <TravellerDetails />
         </DetailsLayout>
-        <OffersList handlePromocodeApply={handlePromocodeApply} />
 
-        <OfferAndBaggage
-          promoError={promoError}
-          handlePromocodeChange={handlePromocodeChange}
-          handlePromocodeBlur={handlePromocodeBlur}
-        />
+        <Offers />
 
-        <BillDetails promoError={promoError} />
+        <BillDetails />
 
         <PaymentMethods onTabClick={updateActiveMethod} form={form} />
 

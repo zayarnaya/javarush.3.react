@@ -11,6 +11,7 @@ import { TicketFormContext } from 'src/contexts';
 import { StationInfo } from 'src/components';
 import { BillDetails, OfferAndBaggage, OffersList, PassengerCard } from 'src/widgets';
 import { BoardingDetails } from 'src/widgets/BoardingDetails/BoardingDetails';
+import { Offers } from 'src/widgets/Offers/Offers';
 
 const { Title, Text } = Typography;
 
@@ -28,7 +29,6 @@ export const ReviewBookingPage = () => {
       extraBaggage,
       classCode,
       code,
-      promocodes,
       meals,
       totalFood,
       baseAmount,
@@ -38,44 +38,7 @@ export const ReviewBookingPage = () => {
       passengerInfoFilled,
       trainLoading,
     },
-    updateState: updateBookingState,
   } = useContext(BookingContext);
-
-  const [promoError, setPromoError] = useState(false);
-
-  const handlePromocodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setPromoError(false);
-    updateBookingState({ key: 'code', values: e.currentTarget.value });
-  }, []);
-
-  const handlePromocodeApply = useCallback(
-    (id: number) => {
-      setPromoError(false);
-      const offer = promocodes?.find((offer: Offer) => offer.id === id);
-      if (!offer) {
-        setPromoError(true);
-      } else {
-        updateBookingState({ key: 'code', values: offer.code });
-      }
-    },
-    [promoError, promocodes],
-  );
-
-  const handlePromocodeBlur = useCallback(
-    (e: FocusEvent<HTMLInputElement>) => {
-      setPromoError(false);
-      const code = e.currentTarget.value?.toLowerCase();
-      if (!code) return;
-
-      const offer = promocodes?.find((offer: Offer) => offer.code.toLowerCase() === code);
-      if (!offer) {
-        setPromoError(true);
-      } else {
-        updateBookingState({ key: 'code', values: e.currentTarget.value });
-      }
-    },
-    [promoError, promocodes],
-  );
 
   const { loading: bookingLoading, error, book } = useBooking();
 
@@ -130,15 +93,9 @@ export const ReviewBookingPage = () => {
         {passengers &&
           passengers.map((passenger) => <PassengerCard id={passenger.id} key={`passenger__${passenger.id}`} />)}
 
-        <OffersList handlePromocodeApply={handlePromocodeApply} />
+        <Offers />
 
-        <OfferAndBaggage
-          promoError={promoError}
-          handlePromocodeChange={handlePromocodeChange}
-          handlePromocodeBlur={handlePromocodeBlur}
-        />
-
-        <BillDetails promoError={promoError} />
+        <BillDetails />
 
         <Card variant="borderless" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
           <Flex vertical align="center" gap={16}>

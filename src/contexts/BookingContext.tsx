@@ -237,18 +237,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
   function updatePassengerById({ id, info }: { id: number; info: Partial<Passenger> }) {
     updateState({
       key: 'passengers',
-      // values: produce(passengers, prev => {
-      //   if (!prev) return;
-      //   const findIndex = prev.findIndex(pass => pass.id === id);
-      //   if (!findIndex || findIndex < 0) return;
-      //   const passenger = prev[findIndex];
-      //   for (let key in info) {
-      //     if (info[key as keyof Passenger] && (key in passenger)) {
-      //       passenger[key as keyof Passenger] = info[key as keyof Passenger];
-      //     }
-      //   }
-      //   prev[findIndex] = passenger;
-      // }) ?? []
       values: (passengers ? [...passengers] : []).map((passenger) =>
         passenger.id === id ? { ...passenger, ...info } : { ...passenger },
       ),

@@ -10,3 +10,4 @@ export { OffersList } from './OffersList/OffersList';
 export { OfferAndBaggage } from './OfferAndBaggage/OfferAndBaggage';
 export { BillDetails } from './BillDetails/BillDetails';
 export { PaymentMethods } from './PaymentMethods/PaymentMethods';
+export { Offers } from './Offers/Offers';
