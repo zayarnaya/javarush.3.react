@@ -30,7 +30,7 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
   const handleFieldChange = useCallback(
     (e: ChangeEvent) => {
       const target = e.currentTarget as HTMLInputElement;
-      const [, , field] = (target.getAttribute('id') ?? '').split('_');
+      const [, , , field] = (target.getAttribute('id') ?? '').split('_');
 
       updatePassengerById({ id, info: { ...passenger, [field]: target.value } });
     },
@@ -54,8 +54,8 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
     <>
       <Card {...props} className={style.card}>
         <Title level={3}>Passenger {id}</Title>
-        <Text>Please enter your contact info</Text>
-        <Form
+        <Text type="secondary">Please enter your contact info</Text>
+        {/* <Form
           name={`passenger_${id}`}
           className={style.form}
           initialValues={{
@@ -64,58 +64,73 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
             phone: passenger?.phone,
             email: passenger?.email,
           }}
-        >
+        > */}
+        <div className={style.form}>
           <Flex vertical>
             <Text>Full Name</Text>
-            <Item name="fullName" rules={[{ required: true, message: "Please fill in passenger's name" }]}>
+            <Item
+              name={`passenger_${id}_fullName`}
+              rules={[{ required: true, message: "Please fill in passenger's name" }]}
+            >
               <Input placeholder="Your name" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Phone Number</Text>
-            <Item name="phone" rules={[{ required: true, message: "Please fill in passenger's phone number" }]}>
+            <Item
+              name={`passenger_${id}_phone`}
+              rules={[{ required: true, message: "Please fill in passenger's phone number" }]}
+            >
               <Input placeholder="+91" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Email</Text>
-            <Item name="email" rules={[{ required: true, message: "Please fill in passenger's e-mail" }]}>
+            <Item
+              name={`passenger_${id}_email`}
+              rules={[{ required: true, message: "Please fill in passenger's e-mail" }]}
+            >
               <Input placeholder="john.doe@company.com" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Date of birth</Text>
 
-            <Item name="birthDate" rules={[{ required: true, message: "Please fill in passenger's date of birth" }]}>
-              <DatePicker placeholder="12.12.1975" onChange={handleDateChange} />
+            <Item
+              name={`passenger_${id}_birthDate`}
+              rules={[{ required: true, message: "Please fill in passenger's date of birth" }]}
+            >
+              <DatePicker placeholder="12.12.1975" onChange={handleDateChange} style={{ width: '100%' }} />
             </Item>
           </Flex>
-        </Form>
+        </div>
+        {/* </Form> */}
       </Card>
 
       {foodLoading ? (
         <Card loading />
       ) : (
         food && (
-          <Flex gap={32}>
-            {food.map((item: Food) => (
-              <FoodCard
-                key={`food_${item.id}`}
-                {...item}
-                handleSelectClick={handleAddMeal}
-                handleDeselectClick={handleRemoveMeal}
-                isSelected={passenger.meal?.includes(item.id) ?? false}
-              />
-            ))}
+          <Flex vertical>
+            <Flex gap={32}>
+              {food.map((item: Food) => (
+                <FoodCard
+                  key={`food_${item.id}`}
+                  {...item}
+                  handleSelectClick={handleAddMeal}
+                  handleDeselectClick={handleRemoveMeal}
+                  isSelected={passenger.meal?.includes(item.id) ?? false}
+                />
+              ))}
+            </Flex>
+            <Flex justify="flex-end">
+              <Link to="/">
+                View more <span className={style.arrow}>{'>'}</span>
+              </Link>
+            </Flex>
           </Flex>
         )
       )}
-
-      <Flex justify="flex-end">
-        <Link to="/">
-          View more <span className={style.arrow}>{'>'}</span>
-        </Link>
-      </Flex>
     </>
   ) : null;
 };

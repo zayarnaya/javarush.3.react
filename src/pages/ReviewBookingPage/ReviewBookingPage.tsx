@@ -1,15 +1,13 @@
-import { Button, Card, Flex, Typography } from 'antd';
-import { useCallback, useContext, useEffect, useRef, useState, type ChangeEvent, type FocusEvent } from 'react';
+import { Button, Card, Flex, Form, Typography } from 'antd';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useBooking } from 'src/api/mockApi';
 import { PageLayout } from 'src/layouts';
-import type { Offer } from 'src/api/mocks';
 import style from './ReviewBookingPage.module.scss';
 import { mapFormData } from 'src/shared/helpers';
 import { BookingContext } from 'src/contexts/BookingContext';
 import { TicketFormContext } from 'src/contexts';
-import { StationInfo } from 'src/components';
-import { BillDetails, OfferAndBaggage, OffersList, PassengerCard } from 'src/widgets';
+import { BillDetails, PassengerForm } from 'src/widgets';
 import { BoardingDetails } from 'src/widgets/BoardingDetails/BoardingDetails';
 import { Offers } from 'src/widgets/Offers/Offers';
 
@@ -35,7 +33,6 @@ export const ReviewBookingPage = () => {
       totalDiscount,
       total,
       totalSum,
-      passengerInfoFilled,
       trainLoading,
     },
   } = useContext(BookingContext);
@@ -62,7 +59,7 @@ export const ReviewBookingPage = () => {
       navigate('/');
       return;
     }
-    if (!passengers || !passengerInfoFilled) {
+    if (!passengers) {
       setBookingFormError(true);
       return;
     }
@@ -83,6 +80,7 @@ export const ReviewBookingPage = () => {
     navigate({ pathname: '/payment', search: new URLSearchParams({ purchaseId: `${purchaseId}` }).toString() });
   }, [train, passengers, extraBaggage, classCode, code, baseAmount, totalDiscount, totalFood, totalSum, total, meals]);
 
+  const [form] = Form.useForm();
   return (
     <PageLayout>
       <Flex vertical gap={32} className={style.wrapper}>
@@ -90,8 +88,9 @@ export const ReviewBookingPage = () => {
 
         <BoardingDetails loading={trainLoading} />
 
-        {passengers &&
-          passengers.map((passenger) => <PassengerCard id={passenger.id} key={`passenger__${passenger.id}`} />)}
+        <PassengerForm form={form} onFinish={handleBooking} onFinishFailed={() => setBookingFormError(true)} />
+        {/* {passengers &&
+          passengers.map((passenger) => <PassengerCard id={passenger.id} key={`passenger__${passenger.id}`} />)} */}
 
         <Offers />
 
@@ -104,8 +103,10 @@ export const ReviewBookingPage = () => {
               style={{ width: '400px', padding: '16px 0', height: '56px' }}
               type="primary"
               variant="solid"
-              onClick={handleBooking}
+              // onClick={handleBooking}
+              onClick={() => form.submit()}
               loading={bookingLoading}
+              htmlType="button"
             >
               Book Now
             </Button>

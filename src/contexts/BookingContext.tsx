@@ -1,4 +1,3 @@
-import { produce } from 'immer';
 import { createContext, useEffect, useState, type FC } from 'react';
 import { useSearchParams } from 'react-router';
 import { useFetchFood, useFetchOffers, useFetchTrain, type Passenger } from 'src/api/mockApi';
@@ -20,7 +19,6 @@ export interface BookingContextState {
   totalDiscount: number | null;
   total: number | null;
   totalSum: number | null;
-  passengerInfoFilled: boolean | null;
   foodLoading: boolean;
   offersLoading: boolean;
   trainLoading: boolean;
@@ -48,7 +46,6 @@ const initialBookingState = {
   totalDiscount: null,
   total: null,
   totalSum: null,
-  passengerInfoFilled: null,
   foodLoading: false,
   offersLoading: false,
   trainLoading: false,
@@ -99,9 +96,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
   );
   const [total, setTotal] = useState<BookingContextState['total']>(initialBookingState.total);
   const [totalSum, setTotalSum] = useState<BookingContextState['totalSum']>(initialBookingState.totalSum);
-  const [passengerInfoFilled, setPassengerInfoFilled] = useState<BookingContextState['passengerInfoFilled']>(
-    initialBookingState.passengerInfoFilled,
-  );
 
   type MoneySumsProps = Pick<
     BookingContextState,
@@ -111,7 +105,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     let baseAmount = 0;
     let totalFood = 0;
     let totalDiscount = 0;
-    console.log(JSON.stringify(train), classCode, JSON.stringify(passengers), extraBaggage, code);
 
     if (train && classCode) {
       baseAmount = getBasePrice(train, classCode, passengers?.length ?? 1);
@@ -121,7 +114,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     if (passengers && food) {
       const { meals, total } = getTotalFoods(passengers, food);
       //@ts-expect-error
-      setMeals(meals); // поправить
+      setMeals(meals);
       totalFood = total;
       setTotalFood(total);
     }
@@ -135,13 +128,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     }
 
     const totalSum = total - totalDiscount;
-    console.log(
-      'SUMS',
-      'baseAmount = ' + baseAmount,
-      'totalFood = ' + totalFood,
-      'totalDiscount = ' + totalDiscount,
-      'totalSum = ' + totalSum,
-    );
     setTotalSum(totalSum);
   };
 
@@ -153,13 +139,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
         break;
       case 'passengers': {
         setPassengers(values);
-        setPassengerInfoFilled(true);
-        for (let passenger of values) {
-          if (!passenger.birthDate || !passenger.email || !passenger.fullName || !passenger.phone) {
-            setPassengerInfoFilled(false);
-            break;
-          }
-        }
         break;
       }
       case 'extraBaggage':
@@ -188,7 +167,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
       case 'totalDiscount':
       case 'total':
       case 'totalSum':
-      case 'passengerInfoFilled':
       case 'foodLoading':
       case 'offersLoading':
       default:
@@ -304,7 +282,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
           totalDiscount,
           total,
           totalSum,
-          passengerInfoFilled,
           foodLoading,
           offersLoading,
           trainLoading,

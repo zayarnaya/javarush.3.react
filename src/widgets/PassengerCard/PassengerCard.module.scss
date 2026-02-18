@@ -1,9 +1,11 @@
 .card {
   border-color: var(--primary-black-50);
   border-radius: 10px;
+  gap: 32px;
 }
 
 .form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  column-gap: 16px;
 }
