@@ -12,3 +12,4 @@ export { BillDetails } from './BillDetails/BillDetails';
 export { PaymentMethods } from './PaymentMethods/PaymentMethods';
 export { Offers } from './Offers/Offers';
 export { PassengerForm } from './PassengerForm/PassengerForm';
+export { SuccessDetails } from './SuccessDetails/SuccessDetails';

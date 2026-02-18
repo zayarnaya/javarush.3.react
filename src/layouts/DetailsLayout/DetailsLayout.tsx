@@ -1,19 +1,21 @@
 import { Card } from 'antd';
-import type { FC } from 'react';
-import type { WithChildren } from 'src/types';
+import { forwardRef, type FC, type HTMLAttributes } from 'react';
+import cn from 'classnames';
 
 import style from './DetailsLayout.module.scss';
 
-interface Props extends WithChildren {
+interface Props extends HTMLAttributes<HTMLDivElement> {
   loading?: boolean;
 }
 
-export const DetailsLayout: FC<Props> = ({ children, loading }) => {
-  return (
-    <Card className={style.details} loading={loading}>
-      {children}
-    </Card>
-  );
-};
+export const DetailsLayout: FC<Props> = forwardRef<HTMLDivElement, Props>(
+  ({ children, loading, className, ...props }, ref) => {
+    return (
+      <Card {...props} ref={ref} className={cn(style.details, className)} loading={loading}>
+        {children}
+      </Card>
+    );
+  },
+);
 
 DetailsLayout.displayName = 'Details.Layout';

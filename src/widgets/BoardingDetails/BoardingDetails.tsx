@@ -5,7 +5,6 @@ import { BookingContext } from 'src/contexts';
 import cn from 'classnames';
 
 import style from './BoardingDetails.module.scss';
-import type classNames from 'classnames';
 
 interface Props {
   loading?: boolean;

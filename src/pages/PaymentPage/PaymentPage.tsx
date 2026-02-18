@@ -1,5 +1,5 @@
 import { Button, Flex, Form, Typography } from 'antd';
-import { useCallback, useContext, useEffect, useState, type ChangeEvent, type FC, type FocusEvent } from 'react';
+import { useContext, useEffect, useState, type ChangeEvent, type FC, type FocusEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useFetchPaymentDetails } from 'src/api/mockApi';
 import { BookingContext } from 'src/contexts';
@@ -18,6 +18,7 @@ const { Title, Text } = Typography;
 export const PaymentPage: FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const toSuccessPage = () => navigate({ pathname: '/success', search: searchParams.toString() });
   const { data, loading, fetchPaymentDetails } = useFetchPaymentDetails();
   const {
     state: { totalSum },
@@ -74,7 +75,7 @@ export const PaymentPage: FC = () => {
             style={{ width: '400px', padding: '16px 0', height: '56px' }}
             type="primary"
             variant="solid"
-            onClick={activeMethod === '1' ? form.submit : () => navigate('/success')}
+            onClick={activeMethod === '1' ? form.submit : toSuccessPage}
           >
             Book Now
           </Button>

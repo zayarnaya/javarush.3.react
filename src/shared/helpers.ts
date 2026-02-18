@@ -28,3 +28,8 @@ export const toRupeees = (num: number | string): string =>
       }).format(num);
 
 export const capitalize = (str: string) => str.slice(0, 1).toUpperCase() + str.slice(1);
+
+export const makeRandomNumberSequence = (length: number): string =>
+  Math.round(Math.random() * 10 ** length)
+    .toString()
+    .padStart(length, '0');

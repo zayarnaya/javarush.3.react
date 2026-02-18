@@ -11,10 +11,13 @@ export const Offers: FC = () => {
     updateState,
   } = useContext(BookingContext);
 
-  const handlePromocodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setPromoError(false);
-    updateState({ key: 'code', values: e.currentTarget.value });
-  }, []);
+  const handlePromocodeChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPromoError(false);
+      updateState({ key: 'code', values: e.currentTarget.value });
+    },
+    [promoError, updateState, setPromoError],
+  );
 
   const handlePromocodeApply = useCallback(
     (id: number) => {
@@ -26,7 +29,7 @@ export const Offers: FC = () => {
         updateState({ key: 'code', values: offer.code });
       }
     },
-    [promoError, promocodes],
+    [promoError, promocodes, updateState, setPromoError],
   );
 
   const handlePromocodeBlur = useCallback(
@@ -42,7 +45,7 @@ export const Offers: FC = () => {
         updateState({ key: 'code', values: e.currentTarget.value });
       }
     },
-    [promoError, promocodes],
+    [promoError, promocodes, updateState, setPromoError],
   );
   return (
     <>
