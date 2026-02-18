@@ -31,14 +31,14 @@ export const FoodCard: FC<Props> = ({
       e.preventDefault();
       handleSelectClick(id);
     },
-    [id],
+    [id, handleSelectClick],
   );
   const onDeselect = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       handleDeselectClick(id);
     },
-    [id],
+    [id, handleDeselectClick],
   );
   return (
     <Flex vertical data-id={id} {...props}>
@@ -50,15 +50,16 @@ export const FoodCard: FC<Props> = ({
           {name}
         </Title>
         <Text>{typeof price === 'number' ? toRupeees(price) : price}</Text>
+
         {!isSelected && (
-          <div className={style.selectButton} onClick={() => handleSelectClick(id)}>
+          <Button className={style.button} variant="outlined" onClick={onSelect}>
             Add to ticket
-          </div>
+          </Button>
         )}
         {isSelected && (
-          <div className={style.deselectButton} onClick={() => handleDeselectClick(id)}>
-            Remove{' '}
-          </div>
+          <Button className={style.button} variant="outlined" danger onClick={onDeselect}>
+            Remove from ticket
+          </Button>
         )}
       </Flex>
     </Flex>

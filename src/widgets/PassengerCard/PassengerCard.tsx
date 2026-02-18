@@ -7,6 +7,7 @@ import { FoodCard } from '../FoodCard/FoodCard';
 import { Link } from 'react-router';
 import dayjs from 'dayjs';
 import { BookingContext } from 'src/contexts';
+// import { useDebounce } from 'src/hooks';
 
 interface Props {
   id: number;
@@ -19,9 +20,12 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
   const {
     state: { passengers, food, foodLoading },
     updatePassengerById,
+    updatePassengerFoodById,
   } = useContext(BookingContext);
 
   const passenger = useMemo(() => passengers?.find((pass) => pass.id === id), [passengers]);
+
+  // const debouncedUpdatePassenger = useDebounce(updatePassengerById);
 
   const handleFieldChange = useCallback(
     (e: ChangeEvent) => {
@@ -30,7 +34,7 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
 
       updatePassengerById({ id, info: { ...passenger, [field]: target.value } });
     },
-    [passengers],
+    [passengers, updatePassengerById],
   );
 
   const handleDateChange = (date: any) =>
@@ -40,11 +44,11 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
     });
 
   const handleAddMeal = (foodId: number) =>
-    updatePassengerById({ id, info: { ...passenger, meal: passenger?.meal ? [...passenger.meal, foodId] : [foodId] } });
+    updatePassengerFoodById({ id, meal: (passenger?.meal ?? []).concat(foodId) });
   const handleRemoveMeal = (foodId: number) =>
-    updatePassengerById({
+    updatePassengerFoodById({
       id,
-      info: { ...passenger, meal: passenger?.meal ? [...passenger.meal].filter((item) => item !== foodId) : [] },
+      meal: (passenger?.meal ?? []).filter((item) => item !== foodId),
     });
   return passenger ? (
     <>
@@ -64,30 +68,26 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
           <Flex vertical>
             <Text>Full Name</Text>
             <Item name="fullName" rules={[{ required: true, message: "Please fill in passenger's name" }]}>
-              <Input placeholder="Your name" onChange={handleFieldChange} value={passenger.fullName ?? ''} />
+              <Input placeholder="Your name" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Phone Number</Text>
             <Item name="phone" rules={[{ required: true, message: "Please fill in passenger's phone number" }]}>
-              <Input placeholder="+91" onChange={handleFieldChange} value={passenger.phone ?? ''} />
+              <Input placeholder="+91" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Email</Text>
             <Item name="email" rules={[{ required: true, message: "Please fill in passenger's e-mail" }]}>
-              <Input placeholder="john.doe@company.com" onChange={handleFieldChange} value={passenger.email ?? ''} />
+              <Input placeholder="john.doe@company.com" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Date of birth</Text>
 
             <Item name="birthDate" rules={[{ required: true, message: "Please fill in passenger's date of birth" }]}>
-              <DatePicker
-                placeholder="12.12.1975"
-                onChange={handleDateChange}
-                value={dayjs(passenger.birthDate) ?? null}
-              />
+              <DatePicker placeholder="12.12.1975" onChange={handleDateChange} />
             </Item>
           </Flex>
         </Form>

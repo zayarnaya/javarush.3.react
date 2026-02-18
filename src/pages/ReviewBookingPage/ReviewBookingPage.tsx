@@ -10,6 +10,7 @@ import { BookingContext } from 'src/contexts/BookingContext';
 import { TicketFormContext } from 'src/contexts';
 import { StationInfo } from 'src/components';
 import { BillDetails, OfferAndBaggage, OffersList, PassengerCard } from 'src/widgets';
+import { BoardingDetails } from 'src/widgets/BoardingDetails/BoardingDetails';
 
 const { Title, Text } = Typography;
 
@@ -123,34 +124,9 @@ export const ReviewBookingPage = () => {
     <PageLayout>
       <Flex vertical gap={32} className={style.wrapper}>
         <Title level={1}>Review your booking</Title>
-        <Card loading={trainLoading}>
-          <Title level={4}>Boarding Details</Title>
-          {train && (
-            <>
-              <Flex justify="space-between">
-                <Title level={5}>
-                  {train.trainNumber} - {train.trainName}
-                </Title>
-                <Text>Class {classCode} & Tatkal Quota</Text>
-              </Flex>
 
-              <Flex justify="space-between">
-                <StationInfo
-                  date={train.from.date}
-                  time={train.from.time}
-                  station={{ name: train.from.station, code: train.from.code }}
-                />
-                <Text type="secondary">{train.duration}</Text>
-                <StationInfo
-                  date={train.to.date}
-                  time={train.to.time}
-                  station={{ name: train.to.station, code: train.to.code }}
-                  align="right"
-                />
-              </Flex>
-            </>
-          )}
-        </Card>
+        <BoardingDetails loading={trainLoading} />
+
         {passengers &&
           passengers.map((passenger) => <PassengerCard id={passenger.id} key={`passenger__${passenger.id}`} />)}
 

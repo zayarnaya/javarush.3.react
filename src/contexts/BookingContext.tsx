@@ -1,8 +1,8 @@
+import { produce } from 'immer';
 import { createContext, useEffect, useState, type FC } from 'react';
 import { useSearchParams } from 'react-router';
 import { useFetchFood, useFetchOffers, useFetchTrain, type Passenger } from 'src/api/mockApi';
 import type { Food, Offer, Train } from 'src/api/mocks';
-import { useDebounce } from 'src/hooks';
 import { getBasePrice, getDiscountAmount, getTotalFoods } from 'src/pages/ReviewBookingPage/helpers';
 import type { WithChildren } from 'src/types';
 
@@ -30,6 +30,8 @@ export interface BookingContextProps {
   state: BookingContextState;
   updateState: (entry: BookingContextStateEntry) => void;
   updatePassengerById: ({ id, info }: { id: number; info: Partial<Passenger> }) => void;
+  updateAllState: (state: Record<string, string | number | string[] | null | undefined>) => void;
+  updatePassengerFoodById: ({ id, meal }: { id: number; meal: number[] }) => void;
 }
 
 const initialBookingState = {
@@ -65,6 +67,10 @@ export const BookingContext = createContext<BookingContextProps>({
   updateState: (entry: BookingContextStateEntry) => {},
   //@ts-expect-error
   updatePassengerById: ({ id, info }: { id: number; info: Partial<Passenger> }) => {},
+  //@ts-expect-error
+  updateAllState: (state: Record<string, string | number | string[] | null | undefined>) => {},
+  //@ts-expect-error
+  updatePassengerFoodById: ({ id, meal }: { id: number; meal: number[] }) => {},
 });
 
 export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
@@ -105,6 +111,7 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     let baseAmount = 0;
     let totalFood = 0;
     let totalDiscount = 0;
+    console.log(JSON.stringify(train), classCode, JSON.stringify(passengers), extraBaggage, code);
 
     if (train && classCode) {
       baseAmount = getBasePrice(train, classCode, passengers?.length ?? 1);
@@ -128,10 +135,15 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     }
 
     const totalSum = total - totalDiscount;
+    console.log(
+      'SUMS',
+      'baseAmount = ' + baseAmount,
+      'totalFood = ' + totalFood,
+      'totalDiscount = ' + totalDiscount,
+      'totalSum = ' + totalSum,
+    );
     setTotalSum(totalSum);
   };
-
-  const debouncedMoneySums = useDebounce(setMoneySums);
 
   const updateState = ({ key, values }: BookingContextStateEntry) => {
     switch (key) {
@@ -140,7 +152,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
         setMoneySums({ train: values, classCode, passengers, food, extraBaggage, code, promocodes });
         break;
       case 'passengers': {
-        console.log('CONTEXT', values);
         setPassengers(values);
         setPassengerInfoFilled(true);
         for (let passenger of values) {
@@ -149,17 +160,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
             break;
           }
         }
-        // пересчитывать нужно только если изменяется еда
-        // чортова еда, да что с тобой не так
-        debouncedMoneySums({
-          train: { ...train },
-          classCode,
-          passengers: [...values],
-          food,
-          extraBaggage,
-          code,
-          promocodes,
-        });
         break;
       }
       case 'extraBaggage':
@@ -237,10 +237,40 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
   function updatePassengerById({ id, info }: { id: number; info: Partial<Passenger> }) {
     updateState({
       key: 'passengers',
+      // values: produce(passengers, prev => {
+      //   if (!prev) return;
+      //   const findIndex = prev.findIndex(pass => pass.id === id);
+      //   if (!findIndex || findIndex < 0) return;
+      //   const passenger = prev[findIndex];
+      //   for (let key in info) {
+      //     if (info[key as keyof Passenger] && (key in passenger)) {
+      //       passenger[key as keyof Passenger] = info[key as keyof Passenger];
+      //     }
+      //   }
+      //   prev[findIndex] = passenger;
+      // }) ?? []
       values: (passengers ? [...passengers] : []).map((passenger) =>
         passenger.id === id ? { ...passenger, ...info } : { ...passenger },
       ),
     });
+  }
+
+  function updatePassengerFoodById({ id, meal }: { id: number; meal: number[] }) {
+    if (!passengers) return;
+    const newPassengers = passengers.map((passenger) =>
+      passenger.id === id ? { ...passenger, meal } : { ...passenger },
+    );
+    updateState({ key: 'passengers', values: newPassengers });
+    setMoneySums({ train, classCode, passengers: newPassengers, food, extraBaggage, code, promocodes });
+  }
+
+  function updateAllState(state: Record<string, string | number | string[] | null | undefined>) {
+    for (let key in state) {
+      if (key in initialBookingState && state[key] !== undefined) {
+        //@ts-expect-error
+        updateState({ key: key as keyof BookingContextState, values: state[key as keyof BookingContextState] });
+      }
+    }
   }
 
   const newPassenger: Omit<Passenger, 'id' | 'meal'> = {
@@ -293,6 +323,8 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
         },
         updateState,
         updatePassengerById,
+        updateAllState,
+        updatePassengerFoodById,
       }}
     >
       {children}

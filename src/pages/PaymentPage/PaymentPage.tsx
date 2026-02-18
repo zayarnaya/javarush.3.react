@@ -1,5 +1,152 @@
-export const PaymentPage = () => {
-  return <div>PAYMENT</div>;
+import { Button, Flex, Form, Typography } from 'antd';
+import { useCallback, useContext, useEffect, useState, type ChangeEvent, type FC, type FocusEvent } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
+import { useFetchPaymentDetails } from 'src/api/mockApi';
+import { BookingContext } from 'src/contexts';
+import { DetailsLayout, PageLayout } from 'src/layouts';
+
+import style from './PaymentPage.module.scss';
+import { BoardingDetails } from 'src/widgets/BoardingDetails/BoardingDetails';
+import { TravellerDetails } from 'src/widgets/TravellerDetails/TravellerDetails';
+import { BillDetails, OfferAndBaggage, OffersList, PaymentMethods } from 'src/widgets';
+import type { Offer } from 'src/api/mocks';
+
+import shield from '@images/save.svg';
+
+const { Title, Text } = Typography;
+
+export const PaymentPage: FC = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { data, loading, fetchPaymentDetails } = useFetchPaymentDetails();
+  const {
+    state: {
+      promocodes,
+
+      totalSum,
+    },
+    updateState,
+    updateAllState,
+  } = useContext(BookingContext);
+
+  useEffect(() => {
+    const id = searchParams.get('purchaseId');
+    if (!id) {
+      navigate('/');
+    }
+  }, []);
+  useEffect(() => {
+    if (!data && !loading) {
+      const id = searchParams.get('purchaseId');
+      id && fetchPaymentDetails(+id);
+    }
+  }, [data, loading]);
+  useEffect(() => {
+    if (data && !loading) {
+      updateAllState(data);
+    }
+  }, [data, loading]);
+
+  const [promoError, setPromoError] = useState(false);
+
+  const handlePromocodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setPromoError(false);
+    updateState({ key: 'code', values: e.currentTarget.value });
+  }, []);
+
+  const handlePromocodeApply = useCallback(
+    (id: number) => {
+      setPromoError(false);
+      const offer = promocodes?.find((offer: Offer) => offer.id === id);
+      if (!offer) {
+        setPromoError(true);
+      } else {
+        updateState({ key: 'code', values: offer.code });
+      }
+    },
+    [promoError, promocodes],
+  );
+
+  const handlePromocodeBlur = useCallback(
+    (e: FocusEvent<HTMLInputElement>) => {
+      setPromoError(false);
+      const code = e.currentTarget.value?.toLowerCase();
+      if (!code) return;
+
+      const offer = promocodes?.find((offer: Offer) => offer.code.toLowerCase() === code);
+      if (!offer) {
+        setPromoError(true);
+      } else {
+        updateState({ key: 'code', values: e.currentTarget.value });
+      }
+    },
+    [promoError, promocodes],
+  );
+
+  const [activeMethod, setActiveMethod] = useState('1');
+  const updateActiveMethod = (key: string) => setActiveMethod(key);
+
+  const [form] = Form.useForm();
+
+  return (
+    <PageLayout>
+      <Flex vertical gap={32} className={style.wrapper}>
+        <Title level={2} style={{ color: 'var(--primary-blue)' }}>
+          Pay <span style={{ color: 'var(--primary-red)' }}>₹{totalSum}</span> to confirm booking
+        </Title>
+        <DetailsLayout loading={loading}>
+          <BoardingDetails loading={loading} inset />
+          <TravellerDetails />
+        </DetailsLayout>
+        <OffersList handlePromocodeApply={handlePromocodeApply} />
+
+        <OfferAndBaggage
+          promoError={promoError}
+          handlePromocodeChange={handlePromocodeChange}
+          handlePromocodeBlur={handlePromocodeBlur}
+        />
+
+        <BillDetails promoError={promoError} />
+
+        <PaymentMethods onTabClick={updateActiveMethod} form={form} />
+
+        <Flex vertical align="center" gap={16}>
+          <Flex gap={24} align="flex-start">
+            <img src={shield} width={32} alt="" />
+            <span>All your data are safe</span>
+          </Flex>
+          <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
+          <Button
+            style={{ width: '400px', padding: '16px 0', height: '56px' }}
+            type="primary"
+            variant="solid"
+            onClick={activeMethod === '1' ? form.submit : () => navigate('/success')}
+          >
+            Book Now
+          </Button>
+          <Button
+            style={{ width: '400px', padding: '16px 0', height: '56px' }}
+            variant="outlined"
+            color="danger"
+            onClick={() => navigate('/')}
+          >
+            Cancel
+          </Button>
+          <Flex gap={32} justify="center">
+            <Text type="secondary" style={{ cursor: 'pointer' }}>
+              Cancellation Policy
+            </Text>
+            <Text type="secondary" style={{ cursor: 'pointer' }}>
+              Terms & Conditions
+            </Text>
+            <Text type="secondary" style={{ cursor: 'pointer' }}>
+              Travel Insurance
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
+    </PageLayout>
+  );
 };
 
 PaymentPage.displayName = 'Payment.Page';

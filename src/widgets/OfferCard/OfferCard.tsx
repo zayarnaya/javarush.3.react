@@ -16,7 +16,7 @@ export const OfferCard: FC<Props> = ({ offer, handleClick, ...rest }) => {
       <Flex gap={8} className={style.info}>
         {makeOfferString(offer)}
       </Flex>
-      <Button type="link" onClick={handleApplyClick}>
+      <Button type="link" htmlType="button" onClick={handleApplyClick}>
         Apply
       </Button>
     </Flex>

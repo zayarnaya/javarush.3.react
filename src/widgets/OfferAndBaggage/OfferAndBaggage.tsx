@@ -1,5 +1,5 @@
 import { Button, Card, Input, Typography } from 'antd';
-import { useCallback, useContext, useState, type ChangeEvent, type FC, type FocusEvent } from 'react';
+import { useCallback, useContext, type ChangeEvent, type FC, type FocusEvent } from 'react';
 
 import style from './OfferAndBaggage.module.scss';
 import { BookingContext } from 'src/contexts';
@@ -18,8 +18,11 @@ export const OfferAndBaggage: FC<Props> = ({ promoError, handlePromocodeChange, 
     updateState,
   } = useContext(BookingContext);
 
-  const handleExtraBaggageAdd = useCallback(() => updateState({ key: 'extraBaggage', values: true }), []);
-  const handleExtraBaggageRemove = useCallback(() => updateState({ key: 'extraBaggage', values: false }), []);
+  const handleExtraBaggageAdd = useCallback(() => updateState({ key: 'extraBaggage', values: true }), [updateState]);
+  const handleExtraBaggageRemove = useCallback(
+    () => updateState({ key: 'extraBaggage', values: false }),
+    [updateState],
+  );
 
   return (
     <div className={style.cards}>
@@ -39,6 +42,7 @@ export const OfferAndBaggage: FC<Props> = ({ promoError, handlePromocodeChange, 
         <Title level={3}>Extra Baggage</Title>
         <div className={style['promo-error']}></div>
         <Button
+          htmlType="button"
           color="default"
           variant="outlined"
           className={style['card__button']}

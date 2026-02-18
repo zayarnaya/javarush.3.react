@@ -1,25 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useDebounce = (func: Function, delay = 500) => {
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
-  const argsRef = useRef<Record<string, any>[]>(null);
+  const [args, setArgs] = useState<any>(null);
 
   useEffect(() => {
+    const timer = setTimeout(func, delay, ...args);
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+      clearTimeout(timer);
     };
-  }, []);
+  }, [args]);
 
   function debounced(...args: any) {
-    timerRef.current = setTimeout(onTime, delay);
-    argsRef.current = args;
-
-    function onTime() {
-      return func.apply(null, argsRef.current);
-    }
+    setArgs(args);
   }
-
   return debounced;
 };

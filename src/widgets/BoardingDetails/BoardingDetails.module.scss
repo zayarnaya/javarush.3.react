@@ -1,0 +1,11 @@
+.card {
+  background-color: var(--primary-blue-10);
+  border: 1px solid var(--primary-black-50);
+  border-radius: 10px;
+
+  &.inset {
+    border: none;
+    background-color: transparent;
+    padding: 0;
+  }
+}

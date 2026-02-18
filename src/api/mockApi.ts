@@ -1,6 +1,15 @@
-import { food, indianRailwayStations, mockOffers, trainsMockData, type Food, type Offer, type Train } from './mocks';
-import { useMemo, useState } from 'react';
-import { getBasePrice, getDiscountAmount, getTotalFoods } from 'src/pages/ReviewBookingPage/helpers';
+import { food, indianRailwayStations, mockOffers, trainsMockData, type Offer, type Train } from './mocks';
+import { useState } from 'react';
+
+const BOOKING_KEY = 'booking';
+
+async function delay(ms: number, response?: any) {
+  return new Promise((resolve) => setTimeout(resolve, ms, response));
+}
+
+async function randomDelay(max = 2000, response?: any) {
+  return new Promise((resolve) => setTimeout(resolve, Math.random() * max, response));
+}
 
 const mapTypeToData: Record<string, any> = {
   stations: indianRailwayStations,
@@ -18,11 +27,7 @@ export interface Passenger {
   meal?: number[];
 }
 
-export const mockFetch = async (type: string, noDelay = false) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, noDelay ? 0 : Math.random() * 2000, mapTypeToData[type]);
-  });
-};
+export const mockFetch = async (type: string, noDelay = false) => randomDelay(noDelay ? 0 : 2000, mapTypeToData[type]);
 
 export const useFetch = () => {
   const [data, setData] = useState<any | null>(null);
@@ -173,7 +178,7 @@ export const bookTrain = async (
   const id = Date.now();
 
   localStorage.setItem(
-    'booking',
+    BOOKING_KEY,
     JSON.stringify({
       id,
       train,
@@ -242,4 +247,35 @@ export const useBooking = () => {
   };
 
   return { loading, error, book };
+};
+
+export const useFetchPaymentDetails = () => {
+  const [data, setData] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPaymentDetails = async (id: number, noDelay = false) => {
+    setLoading(true);
+    setError(null);
+    setData(null);
+
+    try {
+      const paymentRaw = localStorage.getItem(BOOKING_KEY);
+      if (paymentRaw) {
+        const payment = JSON.parse(paymentRaw);
+        if (+payment.id !== id) {
+          throw new Error('No such payment!');
+        }
+        if (!noDelay) await randomDelay(2000);
+        setData(payment);
+      } else {
+        throw new Error('No payments!');
+      }
+    } catch (error) {
+      setError((error as unknown as Error).message);
+    }
+    setLoading(false);
+  };
+
+  return { data, loading, error, fetchPaymentDetails };
 };
