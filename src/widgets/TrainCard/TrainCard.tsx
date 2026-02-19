@@ -32,7 +32,7 @@ export const TrainCard: FC<Props> = ({ train, onSelectTrain, ...props }) => {
           <div className={style.reg}>Everyday</div>
         </Flex>
         <TrainInfo train={train} />
-        <Flex justify="space-between">
+        <Flex justify="space-between" gap={8} className={style['class-card']}>
           {train.classes.map((item, index) => (
             <ClassCard
               key={`${item.classCode}#${index}`}

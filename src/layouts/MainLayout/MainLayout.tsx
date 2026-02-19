@@ -19,7 +19,7 @@ export const MainLayout: FC = () => {
           <main className={cn(style.main, isMainPage && style['main__dark'])}>
             <Outlet />
           </main>
-          <Footer />
+          <Footer isMainPage={isMainPage} />
         </TicketFormContextProvider>
       </StationsContextProvider>
     </BookingContextProvider>

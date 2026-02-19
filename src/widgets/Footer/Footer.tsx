@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const Footer: FC<Props> = ({ isMainPage = false }) => {
-  return isMainPage ? (
+  return isMainPage ? null : (
     <footer className={style.footer}>
       <div className={style.footerLogo}>
         <img src={logo} alt="" className={style.image} />
@@ -22,7 +22,7 @@ export const Footer: FC<Props> = ({ isMainPage = false }) => {
       </nav>
       <div className={style.cp}>©2025 RailWay. All rights reserved</div>
     </footer>
-  ) : null;
+  );
 };
 
 Footer.displayName = 'Footer';

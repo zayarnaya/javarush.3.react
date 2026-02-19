@@ -29,7 +29,7 @@ export const Offers: FC = () => {
         updateState({ key: 'code', values: offer.code });
       }
     },
-    [promoError, promocodes, updateState, setPromoError],
+    [promoError, promocodes, updateState],
   );
 
   const handlePromocodeBlur = useCallback(

@@ -1,4 +1,4 @@
-import { Card, Flex, Typography } from 'antd';
+import { Card, Divider, Flex, Typography } from 'antd';
 import { useCallback, useContext, useEffect } from 'react';
 import { Banner, TicketForm, TrainCard } from 'src/widgets';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -8,6 +8,8 @@ import banner2 from '@images/banner2.png';
 import { useFetchTrains } from 'src/api/mockApi';
 import type { Train } from 'src/api/mocks';
 import { TicketFormContext } from 'src/contexts';
+
+import style from './SearchResultsPage.module.scss';
 
 const { Title, Paragraph } = Typography;
 
@@ -52,6 +54,7 @@ export const SearchResultsPage = () => {
       </Flex>
       <section>
         <Title level={2}>Available Trains</Title>
+        <Divider className={style.divider} />
         <Flex vertical gap={32} style={{ marginBottom: '128px' }}>
           {trainsLoading && <Card loading />}
           {!trainsLoading &&

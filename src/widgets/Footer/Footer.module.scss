@@ -23,6 +23,15 @@
       font-size: 34px;
     }
   }
+
+  @media screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'logo'
+      'nav'
+      'c';
+    padding: 12px;
+  }
 }
 
 .nav {
@@ -31,6 +40,11 @@
   padding: 0;
   gap: 32px;
   grid-area: nav;
+
+  @media screen and (max-width: 800px) {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }
 
 .cp {
