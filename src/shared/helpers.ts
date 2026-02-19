@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 
 const transformDate = (date: Date[] | Date) => {
-  return Array.isArray(date) ? date.map((date) => date.toISOString()).join(',') : date.toISOString();
+  return Array.isArray(date) ? date.map((date) => date.getTime()).join(',') : date.getTime();
+  // return Array.isArray(date) ? date.map((date) => date.toISOString()).join(',') : date.toISOString();
 };
 
 export const mapFormData = (data: Record<string, any>) =>

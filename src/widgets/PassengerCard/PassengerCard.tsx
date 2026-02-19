@@ -7,6 +7,8 @@ import { FoodCard } from '../FoodCard/FoodCard';
 import { Link } from 'react-router';
 import dayjs from 'dayjs';
 import { BookingContext } from 'src/contexts';
+import { produce } from 'immer';
+import type { Passenger } from 'src/api/mockApi';
 // import { useDebounce } from 'src/hooks';
 
 interface Props {
@@ -25,14 +27,17 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
 
   const passenger = useMemo(() => passengers?.find((pass) => pass.id === id), [passengers]);
 
-  // const debouncedUpdatePassenger = useDebounce(updatePassengerById);
-
   const handleFieldChange = useCallback(
     (e: ChangeEvent) => {
       const target = e.currentTarget as HTMLInputElement;
       const [, , , field] = (target.getAttribute('id') ?? '').split('_');
 
-      updatePassengerById({ id, info: { ...passenger, [field]: target.value } });
+      updatePassengerById({
+        id,
+        info: produce(passenger, (prev) => {
+          prev![field as keyof Passenger] = target.value;
+        }) as Partial<Passenger>,
+      });
     },
     [passengers, updatePassengerById],
   );
@@ -40,7 +45,9 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
   const handleDateChange = (date: any) =>
     updatePassengerById({
       id,
-      info: { ...passenger, meal: passenger?.meal ? [...passenger?.meal] : [], birthDate: date },
+      info: produce(passenger, (prev) => {
+        prev!.birthDate = date;
+      }) as Partial<Passenger>,
     });
 
   const handleAddMeal = (foodId: number) =>

@@ -2,6 +2,7 @@ import { Flex, Form } from 'antd';
 import { useContext, useMemo, type FC } from 'react';
 import { BookingContext } from 'src/contexts';
 import { PassengerCard } from '../PassengerCard/PassengerCard';
+import dayjs from 'dayjs';
 
 interface Props {
   form: any;
@@ -22,7 +23,7 @@ export const PassengerForm: FC<Props> = ({ form, onFinish, onFinishFailed }) => 
       res.push([`passenger_${id}_fullName`, fullName]);
       res.push([`passenger_${id}_phone`, phone]);
       res.push([`passenger_${id}_email`, email]);
-      res.push([`passenger_${id}_birthDate`, birthDate]);
+      res.push([`passenger_${id}_birthDate`, dayjs(birthDate)]);
     }
     return Object.fromEntries(res);
   }, [passengers]);
