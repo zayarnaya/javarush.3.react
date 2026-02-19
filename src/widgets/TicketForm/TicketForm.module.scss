@@ -1,9 +1,17 @@
 .form-wrapper {
   gap: 34px;
+  @media screen and (max-width: 800px) {
+    width: 100%;
+    gap: 12px;
+  }
 }
 
 .form {
   width: 640px;
+
+  @media screen and (max-width: 800px) {
+    width: 100%;
+  }
 }
 
 .label {
@@ -28,6 +36,11 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 34px;
+
+  @media screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }
 
 .date-wrapper {

@@ -9,14 +9,14 @@ import { BookingContextProvider, StationsContextProvider, TicketFormContextProvi
 
 export const MainLayout: FC = () => {
   const { pathname } = useLocation();
-  const darkTheme = pathname === '/';
+  const isMainPage = pathname === '/';
 
   return (
     <BookingContextProvider>
       <StationsContextProvider>
         <TicketFormContextProvider>
-          <Header darkTheme={darkTheme} />
-          <main className={cn(style.main, darkTheme && style['main__dark'])}>
+          <Header darkTheme={isMainPage} />
+          <main className={cn(style.main, isMainPage && style['main__dark'])}>
             <Outlet />
           </main>
           <Footer />

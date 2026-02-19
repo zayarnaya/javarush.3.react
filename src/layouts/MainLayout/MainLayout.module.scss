@@ -1,6 +1,14 @@
 .main {
+  min-height: calc(100vh - 116px);
   &__dark {
     background-color: var(--primary-black);
     color: white;
+    background-image: url('../../assets/images/backgrnd.png');
+    background-size: cover;
+
+    @media screen and (max-width: 800px) {
+      background-size: 100%;
+      background-position: center center;
+    }
   }
 }

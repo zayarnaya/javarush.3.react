@@ -1,6 +1,7 @@
 import type { FC, HTMLAttributes } from 'react';
 import style from './FooterNavList.module.scss';
 import { FooterNavListItem } from './FooterNavListItem/FooterNavListItem';
+import { Typography } from 'antd';
 
 interface NavListItem {
   text: string;
@@ -12,10 +13,14 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   items: NavListItem[];
 }
 
+const { Title } = Typography;
+
 export const FooterNavList: FC<Props> = ({ items, label }) => {
   return (
     <ul className={style.list}>
-      <h6 className={style.heading}>{label}</h6>
+      <Title level={4} className={style.heading}>
+        {label}
+      </Title>
       {items.map((item) => (
         <FooterNavListItem {...item} key={item.text} />
       ))}

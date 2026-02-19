@@ -16,9 +16,11 @@
   &Logo {
     display: flex;
     grid-area: logo;
+    align-items: center;
 
     &Name {
       color: white;
+      font-size: 34px;
     }
   }
 }

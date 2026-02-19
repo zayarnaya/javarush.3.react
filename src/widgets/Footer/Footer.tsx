@@ -4,8 +4,12 @@ import style from './Footer.module.scss';
 import { navListItems } from './consts/navlistitems';
 import { FooterNavList } from './FooterNavList/FooterNavList';
 
-export const Footer: FC = () => {
-  return (
+interface Props {
+  isMainPage?: boolean;
+}
+
+export const Footer: FC<Props> = ({ isMainPage = false }) => {
+  return isMainPage ? (
     <footer className={style.footer}>
       <div className={style.footerLogo}>
         <img src={logo} alt="" className={style.image} />
@@ -18,7 +22,7 @@ export const Footer: FC = () => {
       </nav>
       <div className={style.cp}>©2025 RailWay. All rights reserved</div>
     </footer>
-  );
+  ) : null;
 };
 
 Footer.displayName = 'Footer';

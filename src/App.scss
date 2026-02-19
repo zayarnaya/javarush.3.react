@@ -9,3 +9,9 @@
 .ant-input-number-action-up {
   border-inline-start: none !important;
 }
+
+@media screen and (max-width: 800px) {
+  .ant-radio-label {
+    font-size: 12px;
+  }
+}
