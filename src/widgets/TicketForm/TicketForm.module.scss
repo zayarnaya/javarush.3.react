@@ -30,6 +30,10 @@
   overflow: visible;
   justify-content: space-between;
   padding: 0 32px;
+
+  @media screen and (max-width: 800px) {
+    padding: 0 12px;
+  }
 }
 
 .station-wrapper {
@@ -53,9 +57,14 @@
 }
 
 .with-person {
-  width: 118px !important;
+  // width: 118px !important;
   position: relative;
   margin-left: 25px;
+  transform: translateY(3px);
+
+  @media screen and (max-width: 800px) {
+    font-size: 12px;
+  }
 
   &::before {
     content: url('../../assets/images/person.svg');

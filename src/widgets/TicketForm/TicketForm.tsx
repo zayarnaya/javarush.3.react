@@ -134,6 +134,7 @@ export const TicketForm: FC<Props> = ({ handleSubmit, isSearch = false }) => {
               onChange={(value: any) => updateState({ key: 'passengers', values: value })}
               value={passengers ?? 0}
               className={style['with-person']}
+              size="small"
             />
           </Form.Item>
         </Flex>
