@@ -1,5 +1,7 @@
-import { Flex, Typography } from 'antd';
 import type { FC } from 'react';
+import cn from 'classnames';
+
+import style from './StationInfo.module.scss';
 
 interface Props {
   date: string;
@@ -11,17 +13,15 @@ interface Props {
   align?: 'left' | 'right';
 }
 
-const { Paragraph } = Typography;
-
-export const StationInfo: FC<Props> = ({ date, time, station: { name, code } }, align = 'left') => {
+export const StationInfo: FC<Props> = ({ date, time, station: { name, code }, align = 'left' }) => {
   return (
-    <Flex vertical gap={18} align={align === 'right' ? 'flex-end' : 'flex-start'}>
-      <Paragraph>{date}</Paragraph>
-      <Paragraph>{time}</Paragraph>
-      <Paragraph>
+    <div className={style.wrapper}>
+      <p className={cn(style.paragraph, align === 'right' && style['align-right'])}>{date}</p>
+      <p className={cn(style.paragraph, align === 'right' && style['align-right'])}>{time}</p>
+      <p className={cn(style.paragraph, align === 'right' && style['align-right'])}>
         {name} - {code}
-      </Paragraph>
-    </Flex>
+      </p>
+    </div>
   );
 };
 

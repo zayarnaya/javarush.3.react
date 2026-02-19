@@ -9,11 +9,12 @@ import style from './BoardingDetails.module.scss';
 interface Props {
   loading?: boolean;
   inset?: boolean;
+  showClass?: boolean;
 }
 
 const { Title, Text } = Typography;
 
-export const BoardingDetails: FC<Props> = ({ loading = false, inset = false }) => {
+export const BoardingDetails: FC<Props> = ({ loading = false, inset = false, showClass = false }) => {
   const {
     state: { train, classCode },
   } = useContext(BookingContext);
@@ -32,23 +33,25 @@ export const BoardingDetails: FC<Props> = ({ loading = false, inset = false }) =
             <Title level={5}>
               {train.trainNumber} - {train.trainName}
             </Title>
-            <Text>Class {classCode} & Tatkal Quota</Text>
+            {showClass && <Text className={style.showClass}>Class {classCode} & Tatkal Quota</Text>}
           </Flex>
 
-          <Flex justify="space-between">
+          <div className={style.grid}>
             <StationInfo
               date={train.from.date}
               time={train.from.time}
               station={{ name: train.from.station, code: train.from.code }}
             />
-            <Text type="secondary">{train.duration}</Text>
+            <Text type="secondary" className={style.middle}>
+              {train.duration}
+            </Text>
             <StationInfo
               date={train.to.date}
               time={train.to.time}
               station={{ name: train.to.station, code: train.to.code }}
               align="right"
             />
-          </Flex>
+          </div>
         </>
       )}
     </Card>

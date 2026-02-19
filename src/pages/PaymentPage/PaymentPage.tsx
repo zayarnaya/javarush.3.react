@@ -56,7 +56,7 @@ export const PaymentPage: FC = () => {
           Pay <span style={{ color: 'var(--primary-red)' }}>₹{totalSum}</span> to confirm booking
         </Title>
         <DetailsLayout loading={loading}>
-          <BoardingDetails loading={loading} inset />
+          <BoardingDetails loading={loading} inset showClass />
           <TravellerDetails />
         </DetailsLayout>
 

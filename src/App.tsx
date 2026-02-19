@@ -18,7 +18,6 @@ function App() {
           colorError: '#ff6060',
           colorSuccess: '#31a91d',
           fontSize: 16,
-          colorBorder: '#01040088',
           colorBorderSecondary: '#01040088',
           fontSizeHeading2: 32,
 

@@ -3,6 +3,7 @@ import type { Passenger } from 'src/api/mockApi';
 import { BookingContext } from 'src/contexts';
 import dayjs from 'dayjs';
 import { TravellerRow } from './TravellerRow/TravellerRow';
+import style from './TravellerCard.module.scss';
 
 interface Props extends Passenger {}
 
@@ -15,7 +16,7 @@ export const TravellerCard: FC<Props> = ({ fullName, birthDate, email, meal = []
 
   const age = Math.abs(dayjs(birthDate).diff(new Date(), 'year'));
   return (
-    <>
+    <div className={style.grid}>
       <TravellerRow textLeft={fullName ?? ''} textRight={`${age} Yrs`} />
       <TravellerRow textLeft="Extra Baggage" textRight={extraBaggage ? '1' : '0'} />
       {!!foodList.length &&
@@ -23,6 +24,6 @@ export const TravellerCard: FC<Props> = ({ fullName, birthDate, email, meal = []
           <TravellerRow textLeft={item?.name ?? ''} textRight={item?.name ? '1' : ''} key={`${item?.id ?? index}`} />
         ))}
       <TravellerRow textLeft="E-Tickets will be sent to:" textRight={email ?? ''} />
-    </>
+    </div>
   );
 };

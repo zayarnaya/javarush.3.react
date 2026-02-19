@@ -1,5 +1,6 @@
 import { Flex, Typography } from 'antd';
 import type { FC, HTMLAttributes } from 'react';
+import style from './BillRow.module.scss';
 
 const { Text } = Typography;
 
@@ -11,7 +12,9 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 export const BillRow: FC<Props> = ({ title, amount, neg = false, ...rest }) => (
   <Flex justify="space-between" {...rest}>
-    <Text type="secondary">{title}</Text>
+    <Text className={style.text} type="secondary">
+      {title}
+    </Text>
     <Text type="secondary">
       {neg && '-'}
       {typeof amount === 'string' ? amount : `₹${amount.toFixed(2)}`}

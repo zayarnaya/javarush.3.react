@@ -36,6 +36,7 @@ export const OfferAndBaggage: FC<Props> = ({ promoError, handlePromocodeChange, 
           onChange={handlePromocodeChange}
           onBlur={handlePromocodeBlur}
           value={code ?? ''}
+          variant="underlined"
         />
       </Card>
       <Card className={style.card}>

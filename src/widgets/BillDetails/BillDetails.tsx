@@ -13,7 +13,7 @@ export const BillDetails: FC = () => {
   } = useContext(BookingContext);
   return (
     <Card loading={trainLoading || foodLoading || offersLoading}>
-      <Title level={3}>Bill Details</Title>
+      <Title level={4}>Bill Details</Title>
       <Flex gap={4} vertical>
         <BillRow title="Base Ticket Fare" amount={baseAmount ?? 0} />
         {meals &&

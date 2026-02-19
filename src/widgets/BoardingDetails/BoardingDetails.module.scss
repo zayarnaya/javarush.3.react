@@ -8,3 +8,18 @@
     background-color: transparent;
   }
 }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.middle {
+  text-align: center;
+}
+
+.showClass {
+  color: var(--primary-blue);
+}
