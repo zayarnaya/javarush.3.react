@@ -1,5 +1,5 @@
 import train from '@images/success.svg';
-import { Button, Flex, Typography } from 'antd';
+import { Card, Flex, Typography } from 'antd';
 import { PageLayout } from 'src/layouts';
 import { SuccessDetails } from 'src/widgets';
 import QRCode from 'react-qr-code';
@@ -8,6 +8,9 @@ import generatePDF, { Margin } from 'react-to-pdf';
 import { useFetchPaymentDetails } from 'src/api/mockApi';
 import { useNavigate, useSearchParams } from 'react-router';
 import { BookingContext } from 'src/contexts';
+
+import style from './SuccessPage.module.scss';
+import { Disclamers, StyledButton, StyledCard } from 'src/components';
 
 const { Title } = Typography;
 
@@ -37,29 +40,34 @@ export const SuccessPage = () => {
   }, [data, loading]);
   return (
     <PageLayout>
-      <Flex vertical align="center" gap={32} style={{ paddingBottom: '100px' }}>
+      <Flex vertical align="center" gap={24}>
         <img alt="" src={train} width={130} />
         <Title level={2} style={{ color: 'var(--success-green)', textAlign: 'center' }}>
           Congratulations!
           <br />
           You have successfully booked tickets
         </Title>
-        <SuccessDetails ref={pdfRef} loading={loading} />
+      </Flex>
+      <SuccessDetails ref={pdfRef} loading={loading} />
+      <StyledCard className={style.card}>
         <Flex justify="space-between" align="center" gap={32}>
           <QRCode value={location.href} size={220} />
-          <Flex vertical gap={16}>
-            <Button type="primary" onClick={() => navigate('/')}>
+          <Flex vertical gap={16} className={style.buttons}>
+            <StyledButton type="primary" className={style.button} onClick={() => navigate('/')}>
               Book another ticket
-            </Button>
-            <Button
+            </StyledButton>
+            <StyledButton
+              className={style.button}
               type="primary"
               onClick={() => generatePDF(pdfRef, { filename: 'ticket.pdf', page: { margin: Margin.LARGE } })}
             >
               Download Ticket
-            </Button>
+            </StyledButton>
           </Flex>
         </Flex>
-      </Flex>
+      </StyledCard>
+
+      <Disclamers />
     </PageLayout>
   );
 };

@@ -10,6 +10,7 @@ import { TicketFormContext } from 'src/contexts';
 import { BillDetails, PassengerForm } from 'src/widgets';
 import { BoardingDetails } from 'src/widgets/BoardingDetails/BoardingDetails';
 import { Offers } from 'src/widgets/Offers/Offers';
+import { Disclamers } from 'src/components';
 
 const { Title, Text } = Typography;
 
@@ -138,17 +139,7 @@ export const ReviewBookingPage = () => {
                 </Text>
               )}
             </Flex>
-            <Flex gap={32} justify="center">
-              <Text type="secondary" style={{ cursor: 'pointer' }}>
-                Cancellation Policy
-              </Text>
-              <Text type="secondary" style={{ cursor: 'pointer' }}>
-                Terms & Conditions
-              </Text>
-              <Text type="secondary" style={{ cursor: 'pointer' }}>
-                Travel Insurance
-              </Text>
-            </Flex>
+            <Disclamers />
           </Flex>
         </Card>
       </Flex>

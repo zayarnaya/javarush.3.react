@@ -19,7 +19,12 @@ export const BoardingDetails: FC<Props> = ({ loading = false, inset = false }) =
   } = useContext(BookingContext);
 
   return (
-    <Card loading={loading} className={cn(style.card, inset && style.inset)} type={inset ? 'inner' : undefined}>
+    <Card
+      loading={loading}
+      classNames={() => ({ root: { padding: '0' } })}
+      className={cn(style.card, inset && style.inset)}
+      type={inset ? 'inner' : undefined}
+    >
       <Title level={4}>Boarding Details</Title>
       {train && (
         <>

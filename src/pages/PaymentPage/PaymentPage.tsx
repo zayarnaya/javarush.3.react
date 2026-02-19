@@ -12,6 +12,7 @@ import { BillDetails, PaymentMethods } from 'src/widgets';
 
 import shield from '@images/save.svg';
 import { Offers } from 'src/widgets/Offers/Offers';
+import { Disclamers } from 'src/components';
 
 const { Title, Text } = Typography;
 
@@ -87,17 +88,7 @@ export const PaymentPage: FC = () => {
           >
             Cancel
           </Button>
-          <Flex gap={32} justify="center">
-            <Text type="secondary" style={{ cursor: 'pointer' }}>
-              Cancellation Policy
-            </Text>
-            <Text type="secondary" style={{ cursor: 'pointer' }}>
-              Terms & Conditions
-            </Text>
-            <Text type="secondary" style={{ cursor: 'pointer' }}>
-              Travel Insurance
-            </Text>
-          </Flex>
+          <Disclamers />
         </Flex>
       </Flex>
     </PageLayout>
