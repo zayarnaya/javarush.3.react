@@ -3,6 +3,8 @@ import type { FC } from 'react';
 import MaskedInput from 'antd-mask-input';
 import { useNavigate } from 'react-router';
 
+import styles from './styles.module.scss';
+
 export const PaymentMethodForm: FC<{ form: any }> = ({ form }: { form: any }) => {
   const navigate = useNavigate();
   return (
@@ -14,7 +16,7 @@ export const PaymentMethodForm: FC<{ form: any }> = ({ form }: { form: any }) =>
           name="number"
           rules={[{ required: true, message: 'Please write a correct card number' }]}
         >
-          <MaskedInput mask="0000 0000 0000 0000" placeholder="0000 0000 0000 0000" />
+          <MaskedInput className={styles.input} mask="0000 0000 0000 0000" placeholder="0000 0000 0000 0000" />
         </Form.Item>
         <Form.Item
           layout="vertical"
@@ -25,7 +27,7 @@ export const PaymentMethodForm: FC<{ form: any }> = ({ form }: { form: any }) =>
             { pattern: /^[0-9][0-2]\/[0-9][0-9]/, message: 'Please write a correct date in MM/YY format' },
           ]}
         >
-          <MaskedInput mask="00/00" placeholder="MM/YY" />
+          <MaskedInput className={styles.input} mask="00/00" placeholder="MM/YY" />
         </Form.Item>
         <Form.Item
           layout="vertical"
@@ -36,7 +38,7 @@ export const PaymentMethodForm: FC<{ form: any }> = ({ form }: { form: any }) =>
             { pattern: /^[a-zA-Z\s]*$/, message: 'Write name in latin letters' },
           ]}
         >
-          <Input placeholder="Cardholder name" />
+          <Input className={styles.input} placeholder="Cardholder name" />
         </Form.Item>
         <Form.Item
           layout="vertical"
@@ -44,7 +46,7 @@ export const PaymentMethodForm: FC<{ form: any }> = ({ form }: { form: any }) =>
           name="cvc"
           rules={[{ required: true, message: 'Please write a cvc code' }]}
         >
-          <MaskedInput type="password" mask="000" placeholder="000" />
+          <MaskedInput className={styles.input} type="password" mask="000" placeholder="000" />
         </Form.Item>
       </div>
     </Form>

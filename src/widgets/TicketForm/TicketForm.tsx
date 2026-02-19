@@ -1,18 +1,19 @@
-import { useCallback, useContext, useEffect, useMemo, useState, type ChangeEvent, type FC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, type ChangeEvent, type FC } from 'react';
 import { Button, Radio, InputNumber, Form, Select, DatePicker, type RadioChangeEvent, Flex, Typography } from 'antd';
 
 import style from './TicketForm.module.scss';
 import { StationsContext, TicketFormContext } from 'src/contexts';
 import dayjs from 'dayjs';
+import { Label } from './Label';
 
 interface Props {
   handleSubmit: (searchString: string) => void;
-  formType?: 'search' | 'result';
+  isSearch?: boolean;
 }
 
-const { Title } = Typography;
+const { Text } = Typography;
 
-export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => {
+export const TicketForm: FC<Props> = ({ handleSubmit, isSearch = false }) => {
   const { stations, loading: stationsIsLoading } = useContext(StationsContext);
 
   const stationList = useMemo(
@@ -69,14 +70,35 @@ export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => 
 
   const handleFinish = useCallback(
     (values: Record<string, any>) => {
-      const search = new URLSearchParams({ ...values, date: values.date.map((item: any) => item?.valueOf() ?? null) });
+      console.log(values);
+      const search = new URLSearchParams({
+        ...values,
+        date: Array.isArray(values.date) ? values.date.map((item: any) => item?.valueOf()) : values.date.valueOf(),
+      });
       handleSubmit(search.toString());
     },
     [handleSubmit],
   );
+
+  const [formError, setFormError] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    if (formError) {
+      timerRef.current = setTimeout(setFormError, 2000, false);
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef?.current);
+      }
+    };
+  });
+
+  const handleFail = () => setFormError(true);
   return (
     <Form
       onFinish={handleFinish}
+      onFinishFailed={handleFail}
       initialValues={{
         type: type ?? 'round',
         passengers: passengers ?? 1,
@@ -84,6 +106,8 @@ export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => 
         arrival: arrival ?? '',
         date: date?.map((value) => dayjs(new Date(value))) ?? null,
       }}
+      className={style.form}
+      requiredMark={false}
     >
       <Flex vertical className={style['form-wrapper']}>
         <Flex className={style['type-wrapper']}>
@@ -103,21 +127,23 @@ export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => 
           >
             <InputNumber
               mode="spinner"
+              variant="borderless"
               step={1}
               min={0}
               max={25}
               onChange={(value: any) => updateState({ key: 'passengers', values: value })}
               value={passengers ?? 0}
+              className={style['with-person']}
             />
           </Form.Item>
         </Flex>
         <div className={style['station-wrapper']}>
           <Flex vertical>
-            <Title level={5}>Departure</Title>
             <Form.Item
-              label={null}
+              label={<Label className={isSearch ? '' : style.white}>Departure</Label>}
               name="departure"
               rules={[{ required: true, message: 'Select the departure station!' }]}
+              layout="vertical"
             >
               <Select
                 loading={stationsIsLoading}
@@ -131,8 +157,12 @@ export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => 
             </Form.Item>
           </Flex>
           <Flex vertical>
-            <Title level={5}>Arrival</Title>
-            <Form.Item label={null} name="arrival" rules={[{ required: true, message: 'Select the arrival station!' }]}>
+            <Form.Item
+              layout="vertical"
+              label={<Label className={isSearch ? '' : style.white}>Arrival</Label>}
+              name="arrival"
+              rules={[{ required: true, message: 'Select the arrival station!' }]}
+            >
               <Select
                 loading={stationsIsLoading}
                 options={arrivalList ?? []}
@@ -145,12 +175,12 @@ export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => 
             </Form.Item>
           </Flex>
         </div>
-        <Title level={5}>Pick your lucky day!</Title>
         <Form.Item
-          label={null}
+          label={<Label className={isSearch ? '' : style.white}>Pick your lucky day!</Label>}
           name="date"
           className={style['date-wrapper']}
           rules={[{ required: true, message: 'Please select date!' }]}
+          layout="vertical"
         >
           {type === 'one-way' ? (
             <DatePicker
@@ -172,6 +202,9 @@ export const TicketForm: FC<Props> = ({ handleSubmit, formType = 'search' }) => 
               Ticket, please!
             </Button>
           </Form.Item>{' '}
+        </Flex>
+        <Flex style={{ height: '50px' }}>
+          {formError && <Text type="danger">Oops! Something went wrong with the form</Text>}
         </Flex>
       </Flex>
     </Form>

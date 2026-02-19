@@ -2,12 +2,26 @@
   gap: 34px;
 }
 
+.form {
+  width: 640px;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 600;
+
+  &.white {
+    color: white !important;
+  }
+}
+
 .type-wrapper {
   background-color: white;
   border-radius: 10px;
   height: 34px;
   overflow: visible;
   justify-content: space-between;
+  padding: 0 32px;
 }
 
 .station-wrapper {
@@ -23,4 +37,18 @@
 
 .datePicker {
   width: 100%;
+}
+
+.with-person {
+  width: 118px !important;
+  position: relative;
+  margin-left: 25px;
+
+  &::before {
+    content: url('../../assets/images/person.svg');
+    position: absolute;
+    top: 64%;
+    left: -25px;
+    transform: translateY(-50%);
+  }
 }
