@@ -1,5 +1,6 @@
 import { Button, Flex, Typography } from 'antd';
 import { useCallback, type FC, type MouseEvent } from 'react';
+import cn from 'classnames';
 
 import style from './FoodCard.module.scss';
 import { toRupeees } from 'src/shared/helpers';
@@ -49,7 +50,7 @@ export const FoodCard: FC<Props> = ({
         <Title level={5} className={style.title} ellipsis>
           {name}
         </Title>
-        <Text>{typeof price === 'number' ? toRupeees(price) : price}</Text>
+        <Text className={style.price}>{typeof price === 'number' ? toRupeees(price) : price}</Text>
 
         {!isSelected && (
           <Button className={style.button} variant="outlined" onClick={onSelect}>
@@ -57,7 +58,7 @@ export const FoodCard: FC<Props> = ({
           </Button>
         )}
         {isSelected && (
-          <Button className={style.button} variant="outlined" danger onClick={onDeselect}>
+          <Button className={cn(style.button, style.deselect)} variant="outlined" danger onClick={onDeselect}>
             Remove from ticket
           </Button>
         )}

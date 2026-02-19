@@ -10,7 +10,7 @@
 }
 
 .info-wrapper {
-  width: 190px;
+  width: 192px;
   height: 158px;
   border: 1px solid var(--primary-black-50);
   border-radius: 10px;
@@ -51,4 +51,14 @@
 .button {
   padding: 10px 25px;
   width: 100%;
+  border-color: var(--primary-blue);
+  height: 41px;
+
+  &.deselect {
+    border-color: var(--primary-red);
+  }
+}
+
+.price {
+  text-align: center;
 }

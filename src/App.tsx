@@ -14,7 +14,7 @@ function App() {
           // Seed Token, affects wide range
           colorPrimary: '#5e4ae3',
           colorInfo: '#5e4ae3',
-          borderRadius: 10,
+          borderRadiusLG: 10,
           colorError: '#ff6060',
           colorSuccess: '#31a91d',
           fontSize: 16,

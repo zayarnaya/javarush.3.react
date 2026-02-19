@@ -90,7 +90,7 @@ export const ReviewBookingPage = () => {
       <Flex vertical gap={32} className={style.wrapper}>
         <Title level={1}>Review your booking</Title>
 
-        <BoardingDetails loading={trainLoading} />
+        <BoardingDetails loading={trainLoading} showClass />
 
         <PassengerForm form={form} onFinish={handleBooking} onFinishFailed={() => setBookingFormError(true)} />
         {/* {passengers &&

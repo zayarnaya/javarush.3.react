@@ -9,3 +9,10 @@
   grid-template-columns: repeat(2, 1fr);
   column-gap: 16px;
 }
+
+.input {
+  height: 56px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--lighter-grey);
+}

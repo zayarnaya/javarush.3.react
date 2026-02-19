@@ -77,27 +77,36 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
             <Text>Full Name</Text>
             <Item
               name={`passenger_${id}_fullName`}
-              rules={[{ required: true, message: "Please fill in passenger's name" }]}
+              rules={[
+                { required: true, message: "Please fill in passenger's name" },
+                { pattern: /^[a-zA-Z\s]*$/, message: 'Write name in latin letters' },
+              ]}
             >
-              <Input placeholder="Your name" onChange={handleFieldChange} />
+              <Input className={style.input} placeholder="Your name" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Phone Number</Text>
             <Item
               name={`passenger_${id}_phone`}
-              rules={[{ required: true, message: "Please fill in passenger's phone number" }]}
+              rules={[
+                { required: true, message: "Please fill in passenger's phone number" },
+                { pattern: /^(\+)?[\d\s-]*$/, message: 'Write corrent phone number' },
+              ]}
             >
-              <Input placeholder="+91" onChange={handleFieldChange} />
+              <Input className={style.input} placeholder="+91" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
             <Text>Email</Text>
             <Item
               name={`passenger_${id}_email`}
-              rules={[{ required: true, message: "Please fill in passenger's e-mail" }]}
+              rules={[
+                { required: true, message: "Please fill in passenger's e-mail" },
+                { pattern: /^[^@]+@[^@]+$/, message: 'Write correct email' },
+              ]}
             >
-              <Input placeholder="john.doe@company.com" onChange={handleFieldChange} />
+              <Input className={style.input} placeholder="john.doe@company.com" onChange={handleFieldChange} />
             </Item>
           </Flex>
           <Flex vertical>
@@ -107,7 +116,12 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
               name={`passenger_${id}_birthDate`}
               rules={[{ required: true, message: "Please fill in passenger's date of birth" }]}
             >
-              <DatePicker placeholder="12.12.1975" onChange={handleDateChange} style={{ width: '100%' }} />
+              <DatePicker
+                className={style.input}
+                placeholder="12.12.1975"
+                onChange={handleDateChange}
+                style={{ width: '100%' }}
+              />
             </Item>
           </Flex>
         </div>
