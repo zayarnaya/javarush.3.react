@@ -5,6 +5,7 @@ import { BookingContext } from 'src/contexts';
 import cn from 'classnames';
 
 import style from './BoardingDetails.module.scss';
+import { TrainInfo } from '../TrainInfo/TrainInfo';
 
 interface Props {
   loading?: boolean;
@@ -36,22 +37,7 @@ export const BoardingDetails: FC<Props> = ({ loading = false, inset = false, sho
             {showClass && <Text className={style.showClass}>Class {classCode} & Tatkal Quota</Text>}
           </Flex>
 
-          <div className={style.grid}>
-            <StationInfo
-              date={train.from.date}
-              time={train.from.time}
-              station={{ name: train.from.station, code: train.from.code }}
-            />
-            <Text type="secondary" className={style.middle}>
-              {train.duration}
-            </Text>
-            <StationInfo
-              date={train.to.date}
-              time={train.to.time}
-              station={{ name: train.to.station, code: train.to.code }}
-              align="right"
-            />
-          </div>
+          <TrainInfo train={train} />
         </>
       )}
     </Card>

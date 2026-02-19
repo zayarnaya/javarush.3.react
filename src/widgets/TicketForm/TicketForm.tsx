@@ -22,7 +22,7 @@ export const TicketForm: FC<Props> = ({ handleSubmit, isSearch = false }) => {
   );
 
   const {
-    state: { type, passengers, departure, arrival, date, trainId, isFormFilled },
+    state: { type, passengers, departure, arrival, date },
     updateState,
     updateAllState,
   } = useContext(TicketFormContext);
@@ -153,6 +153,8 @@ export const TicketForm: FC<Props> = ({ handleSubmit, isSearch = false }) => {
                 onChange={handleDepartureChange}
                 value={departure}
                 allowClear
+                style={{ height: '53px', backgroundColor: 'white' }}
+                variant="borderless"
               />
             </Form.Item>
           </Flex>
@@ -171,6 +173,8 @@ export const TicketForm: FC<Props> = ({ handleSubmit, isSearch = false }) => {
                 onChange={handleArrivalChange}
                 value={arrival}
                 allowClear
+                style={{ height: '53px', backgroundColor: 'white' }}
+                variant="borderless"
               />
             </Form.Item>
           </Flex>
@@ -187,22 +191,24 @@ export const TicketForm: FC<Props> = ({ handleSubmit, isSearch = false }) => {
               className={style.datePicker}
               onChange={handleDateChange}
               value={date?.[0] ? dayjs(new Date(date[0])) : null}
+              style={{ height: '53px', backgroundColor: 'white' }}
+              variant="borderless"
             />
           ) : (
             <DatePicker.RangePicker
               className={style.datePicker}
               onChange={handleRangeChange}
               value={date ? [dayjs(new Date(date[0])), dayjs(new Date(date[1]))] : null}
+              style={{ height: '53px', backgroundColor: 'white' }}
+              variant="borderless"
             />
           )}
         </Form.Item>
-        <Flex justify="center">
-          <Form.Item label={null}>
-            <Button type="primary" htmlType="submit" block>
-              Ticket, please!
-            </Button>
-          </Form.Item>{' '}
-        </Flex>
+        <Form.Item label={null}>
+          <Button type="primary" htmlType="submit" block style={{ height: '64px' }}>
+            Ticket, please!
+          </Button>
+        </Form.Item>
         <Flex style={{ height: '50px' }}>
           {formError && <Text type="danger">Oops! Something went wrong with the form</Text>}
         </Flex>

@@ -131,7 +131,6 @@ export const TicketFormContextProvider: FC<WithChildren> = ({ children }) => {
   }
 
   function updateAllState(state: Record<string, string | number | string[] | null | undefined>) {
-    console.log('UPDATE STATE');
     for (let key in state) {
       if (key in initialFormState) {
         updateState({ key: key as keyof TicketFormState, values: state[key as keyof TicketFormState] });

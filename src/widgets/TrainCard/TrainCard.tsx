@@ -5,6 +5,7 @@ import style from './TrainCard.module.scss';
 import type { ClassCode, Train } from 'src/api/mocks';
 import { ClassCard } from './components';
 import { StationInfo } from 'src/components';
+import { TrainInfo } from '../TrainInfo/TrainInfo';
 
 interface Props {
   train: Train;
@@ -22,38 +23,29 @@ export const TrainCard: FC<Props> = ({ train, onSelectTrain, ...props }) => {
   );
   return (
     <Card {...props} className={style.card}>
-      <Title level={3}>
-        {train.trainNumber} - {train.trainName}
-      </Title>
-      <Text>Runs on:</Text>
-      <div className={style.reg}>Everyday</div>
-      <Flex justify="space-between">
-        <StationInfo
-          date={train.from.date}
-          time={train.from.time}
-          station={{ name: train.from.station, code: train.from.code }}
-        />
-        <Text type="secondary">{train.duration}</Text>
-        <StationInfo
-          date={train.to.date}
-          time={train.to.time}
-          station={{ name: train.to.station, code: train.to.code }}
-          align="right"
-        />
-      </Flex>
-      <Flex justify="space-between">
-        {train.classes.map((item, index) => (
-          <ClassCard
-            key={`${item.classCode}#${index}`}
-            onClick={handleClassSelect}
-            code={item.classCode}
-            name={item.className}
-            price={item.price}
-            avl={item.availability.type === 'available' && item.availability.count}
-            wl={item.availability.type === 'waitlist' && item.availability.position}
-            tariff={item.fareType}
-          />
-        ))}
+      <Flex vertical gap={24}>
+        <Title level={3}>
+          {train.trainNumber} - {train.trainName}
+        </Title>
+        <Flex vertical>
+          <Text>Runs on:</Text>
+          <div className={style.reg}>Everyday</div>
+        </Flex>
+        <TrainInfo train={train} />
+        <Flex justify="space-between">
+          {train.classes.map((item, index) => (
+            <ClassCard
+              key={`${item.classCode}#${index}`}
+              onClick={handleClassSelect}
+              code={item.classCode}
+              name={item.className}
+              price={item.price}
+              avl={item.availability.type === 'available' && item.availability.count}
+              wl={item.availability.type === 'waitlist' && item.availability.position}
+              tariff={item.fareType}
+            />
+          ))}
+        </Flex>
       </Flex>
     </Card>
   );

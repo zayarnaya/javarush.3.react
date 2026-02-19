@@ -39,7 +39,7 @@ export const SearchResultsPage = () => {
   return (
     <PageLayout>
       <Title level={1}>Search results</Title>
-      <TicketForm handleSubmit={handleSubmit} formType="result" />
+      <TicketForm handleSubmit={handleSubmit} isSearch />
       <Flex vertical gap={34}>
         <Banner text="Planning your holidays" image={banner1} />
         <Banner text="Train tourism packages" image={banner2} />
