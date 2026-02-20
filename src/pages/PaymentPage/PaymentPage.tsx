@@ -73,7 +73,7 @@ export const PaymentPage: FC = () => {
           </Flex>
           <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
           <Button
-            style={{ width: '400px', padding: '16px 0', height: '56px' }}
+            style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
             type="primary"
             variant="solid"
             onClick={activeMethod === '1' ? form.submit : toSuccessPage}
@@ -81,7 +81,7 @@ export const PaymentPage: FC = () => {
             Book Now
           </Button>
           <Button
-            style={{ width: '400px', padding: '16px 0', height: '56px' }}
+            style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
             variant="outlined"
             color="danger"
             onClick={() => navigate('/')}
