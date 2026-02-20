@@ -1,5 +1,5 @@
 import { Card, DatePicker, Flex, Form, Input, Typography } from 'antd';
-import { useCallback, useContext, useMemo, type ChangeEvent, type FC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState, type ChangeEvent, type FC } from 'react';
 
 import style from './PassengerCard.module.scss';
 import type { Food } from 'src/api/mocks';
@@ -56,97 +56,101 @@ export const PassengerCard: FC<Props> = ({ id, ...props }) => {
       id,
       meal: (passenger?.meal ?? []).filter((item) => item !== foodId),
     });
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 800);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return passenger ? (
     <>
       <Card {...props} className={style.card}>
         <Title level={3}>Passenger {id}</Title>
         <Text type="secondary">Please enter your contact info</Text>
-        {/* <Form
-          name={`passenger_${id}`}
-          className={style.form}
-          initialValues={{
-            fullName: passenger?.fullName,
-            birthDate: passenger?.birthDate,
-            phone: passenger?.phone,
-            email: passenger?.email,
-          }}
-        > */}
         <div className={style.form}>
-          <Flex vertical>
-            <Text>Full Name</Text>
-            <Item
-              name={`passenger_${id}_fullName`}
-              rules={[
-                { required: true, message: "Please fill in passenger's name" },
-                { pattern: /^[a-zA-Z\s]*$/, message: 'Write name in latin letters' },
-              ]}
-            >
-              <Input className={style.input} placeholder="Your name" onChange={handleFieldChange} />
-            </Item>
-          </Flex>
-          <Flex vertical>
-            <Text>Phone Number</Text>
-            <Item
-              name={`passenger_${id}_phone`}
-              rules={[
-                { required: true, message: "Please fill in passenger's phone number" },
-                { pattern: /^(\+)?[\d\s-]*$/, message: 'Write corrent phone number' },
-              ]}
-            >
-              <Input className={style.input} placeholder="+91" onChange={handleFieldChange} />
-            </Item>
-          </Flex>
-          <Flex vertical>
-            <Text>Email</Text>
-            <Item
-              name={`passenger_${id}_email`}
-              rules={[
-                { required: true, message: "Please fill in passenger's e-mail" },
-                { pattern: /^[^@]+@[^@]+$/, message: 'Write correct email' },
-              ]}
-            >
-              <Input className={style.input} placeholder="john.doe@company.com" onChange={handleFieldChange} />
-            </Item>
-          </Flex>
-          <Flex vertical>
-            <Text>Date of birth</Text>
-
-            <Item
-              name={`passenger_${id}_birthDate`}
-              rules={[{ required: true, message: "Please fill in passenger's date of birth" }]}
-            >
-              <DatePicker
-                className={style.input}
-                placeholder="12.12.1975"
-                onChange={handleDateChange}
-                style={{ width: '100%' }}
-              />
-            </Item>
-          </Flex>
+          <Item
+            name={`passenger_${id}_fullName`}
+            rules={[
+              { required: true, message: "Please fill in passenger's name" },
+              { pattern: /^[a-zA-Z\s]*$/, message: 'Write name in latin letters' },
+            ]}
+            label="Full Name"
+            layout="vertical"
+          >
+            <Input className={style.input} placeholder="Your name" onChange={handleFieldChange} />
+          </Item>
+          <Item
+            name={`passenger_${id}_phone`}
+            rules={[
+              { required: true, message: "Please fill in passenger's phone number" },
+              { pattern: /^(\+)?[\d\s-]*$/, message: 'Write corrent phone number' },
+            ]}
+            label="Phone Number"
+            layout="vertical"
+          >
+            <Input className={style.input} placeholder="+91" onChange={handleFieldChange} />
+          </Item>
+          <Item
+            name={`passenger_${id}_email`}
+            rules={[
+              { required: true, message: "Please fill in passenger's e-mail" },
+              { pattern: /^[^@]+@[^@]+$/, message: 'Write correct email' },
+            ]}
+            label="Email"
+            layout="vertical"
+          >
+            <Input className={style.input} placeholder="john.doe@company.com" onChange={handleFieldChange} />
+          </Item>
+          <Item
+            name={`passenger_${id}_birthDate`}
+            rules={[{ required: true, message: "Please fill in passenger's date of birth" }]}
+            label="Date of birth"
+            layout="vertical"
+          >
+            <DatePicker
+              className={style.input}
+              placeholder="12.12.1975"
+              onChange={handleDateChange}
+              style={{ width: '100%' }}
+            />
+          </Item>
         </div>
-        {/* </Form> */}
       </Card>
 
       {foodLoading ? (
         <Card loading />
       ) : (
         food && (
-          <Flex vertical>
-            <Flex gap={32}>
-              {food.map((item: Food) => (
+          <Flex className={style['foods-wrapper']}>
+            <Flex gap={32} className={style.foods}>
+              {isMobile ? (
                 <FoodCard
-                  key={`food_${item.id}`}
-                  {...item}
+                  key={`food_${food[0].id}`}
+                  {...food[0]}
                   handleSelectClick={handleAddMeal}
                   handleDeselectClick={handleRemoveMeal}
-                  isSelected={passenger.meal?.includes(item.id) ?? false}
+                  isSelected={passenger.meal?.includes(food[0].id) ?? false}
                 />
-              ))}
+              ) : (
+                food.map((item: Food) => (
+                  <FoodCard
+                    key={`food_${item.id}`}
+                    {...item}
+                    handleSelectClick={handleAddMeal}
+                    handleDeselectClick={handleRemoveMeal}
+                    isSelected={passenger.meal?.includes(item.id) ?? false}
+                  />
+                ))
+              )}
             </Flex>
             <Flex justify="flex-end">
-              <Link to="/">
-                View more <span className={style.arrow}>{'>'}</span>
-              </Link>
+              <a href="" className={style['view-more']}>
+                View more{'\u00A0'}
+                <span className={style.arrow}>{'>'}</span>
+              </a>
             </Flex>
           </Flex>
         )

@@ -100,11 +100,15 @@ export const ReviewBookingPage = () => {
 
         <BillDetails />
 
-        <Card variant="borderless" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+        <Card
+          variant="borderless"
+          type="inner"
+          style={{ backgroundColor: 'transparent', boxShadow: 'none', padding: 0 }}
+        >
           <Flex vertical align="center" gap={16}>
             <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
             <Button
-              style={{ width: '400px', padding: '16px 0', height: '56px' }}
+              style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
               type="primary"
               variant="solid"
               // onClick={handleBooking}
@@ -115,7 +119,7 @@ export const ReviewBookingPage = () => {
               Book Now
             </Button>
             <Button
-              style={{ width: '400px', padding: '16px 0', height: '56px' }}
+              style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
               variant="outlined"
               color="danger"
               onClick={() =>

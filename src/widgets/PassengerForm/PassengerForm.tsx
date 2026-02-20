@@ -36,6 +36,7 @@ export const PassengerForm: FC<Props> = ({ form, onFinish, onFinishFailed }) => 
       initialValues={initialValues}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
+      requiredMark={false}
     >
       <Flex vertical gap={32}>
         {passengers.map((passenger) => (
