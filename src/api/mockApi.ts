@@ -3,10 +3,6 @@ import { useState } from 'react';
 
 const BOOKING_KEY = 'booking';
 
-async function delay(ms: number, response?: any) {
-  return new Promise((resolve) => setTimeout(resolve, ms, response));
-}
-
 async function randomDelay(max = 2000, response?: any) {
   return new Promise((resolve) => setTimeout(resolve, Math.random() * max, response));
 }

@@ -18,3 +18,5 @@ export const NotFoundPage = () => {
 };
 
 NotFoundPage.displayName = 'Not.Found.Page';
+
+export default NotFoundPage;

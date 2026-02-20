@@ -68,3 +68,4 @@ export const SearchResultsPage = () => {
 };
 
 SearchResultsPage.displayName = 'Search.Results.Page';
+export default SearchResultsPage;

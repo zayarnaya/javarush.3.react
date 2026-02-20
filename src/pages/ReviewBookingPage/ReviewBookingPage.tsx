@@ -148,3 +148,4 @@ export const ReviewBookingPage = () => {
 };
 
 ReviewBookingPage.displayName = 'Review.Booking.Page';
+export default ReviewBookingPage;

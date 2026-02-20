@@ -1,6 +1,5 @@
 import { Card, Flex, Typography } from 'antd';
 import { useContext, type FC } from 'react';
-import { StationInfo } from 'src/components';
 import { BookingContext } from 'src/contexts';
 import cn from 'classnames';
 

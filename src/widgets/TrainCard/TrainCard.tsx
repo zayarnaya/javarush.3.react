@@ -4,7 +4,6 @@ import { Card, Flex, Typography } from 'antd';
 import style from './TrainCard.module.scss';
 import type { ClassCode, Train } from 'src/api/mocks';
 import { ClassCard } from './components';
-import { StationInfo } from 'src/components';
 import { TrainInfo } from '../TrainInfo/TrainInfo';
 
 interface Props {

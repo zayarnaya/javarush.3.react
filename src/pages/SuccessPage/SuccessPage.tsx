@@ -1,5 +1,5 @@
 import train from '@images/success.svg';
-import { Card, Flex, Typography } from 'antd';
+import { Flex, Typography } from 'antd';
 import { PageLayout } from 'src/layouts';
 import { SuccessDetails } from 'src/widgets';
 import QRCode from 'react-qr-code';
@@ -73,3 +73,4 @@ export const SuccessPage = () => {
 };
 
 SuccessPage.displayName = 'Success.Page';
+export default SuccessPage;

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState, type ChangeEvent, type FC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, type FC } from 'react';
 import {
   Button,
   Radio,

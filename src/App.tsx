@@ -20,9 +20,11 @@ function App() {
           fontSize: 16,
           colorBorderSecondary: '#01040088',
           fontSizeHeading2: 32,
-
-          // Derived token, affects narrow range
-          // colorBgContainer: '#f6ffed',
+        },
+        components: {
+          Spin: {
+            colorPrimary: '#90a3bf',
+          },
         },
       }}
     >

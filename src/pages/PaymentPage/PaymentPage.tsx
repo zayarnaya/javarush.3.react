@@ -1,5 +1,5 @@
 import { Button, Flex, Form, Typography } from 'antd';
-import { useContext, useEffect, useState, type ChangeEvent, type FC, type FocusEvent } from 'react';
+import { useContext, useEffect, useState, type FC } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useFetchPaymentDetails } from 'src/api/mockApi';
 import { BookingContext } from 'src/contexts';
@@ -96,3 +96,4 @@ export const PaymentPage: FC = () => {
 };
 
 PaymentPage.displayName = 'Payment.Page';
+export default PaymentPage;

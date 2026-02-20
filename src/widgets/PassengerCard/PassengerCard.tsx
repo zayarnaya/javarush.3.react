@@ -5,7 +5,6 @@ import style from './PassengerCard.module.scss';
 import type { Food } from 'src/api/mocks';
 import { FoodCard } from '../FoodCard/FoodCard';
 import { Link } from 'react-router';
-import dayjs from 'dayjs';
 import { BookingContext } from 'src/contexts';
 import { produce } from 'immer';
 import type { Passenger } from 'src/api/mockApi';

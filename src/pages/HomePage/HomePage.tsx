@@ -27,3 +27,5 @@ export const HomePage = () => {
 };
 
 HomePage.displayName = 'Home.Page';
+
+export default HomePage;
