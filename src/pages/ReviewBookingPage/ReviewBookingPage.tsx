@@ -115,6 +115,7 @@ export const ReviewBookingPage = () => {
               withError
               error={!!error}
               bookingError={bookingFormError}
+              bookLoading={bookLoading}
             />
           </Flex>
         </Card>

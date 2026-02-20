@@ -4,11 +4,9 @@ import { useCallback, useContext, useEffect, useMemo, useState, type ChangeEvent
 import style from './PassengerCard.module.scss';
 import type { Food } from 'src/api/mocks';
 import { FoodCard } from '../FoodCard/FoodCard';
-import { Link } from 'react-router';
 import { BookingContext } from 'src/contexts';
 import { produce } from 'immer';
 import type { Passenger } from 'src/api/mockApi';
-// import { useDebounce } from 'src/hooks';
 
 interface Props {
   id: number;
