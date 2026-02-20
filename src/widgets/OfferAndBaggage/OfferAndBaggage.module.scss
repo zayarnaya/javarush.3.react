@@ -1,0 +1,25 @@
+.cards {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: repeat(2, 1fr);
+
+  @media screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  width: 100%;
+  border: 1px solid var(--primary-black-50);
+
+  &__button {
+    border-color: var(--primary-blue);
+    height: 39px;
+  }
+}
+
+.promo {
+  &-error {
+    height: 50px;
+  }
+}

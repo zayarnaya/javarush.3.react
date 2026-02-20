@@ -3,3 +3,5 @@ build
 index.html
 package.json
 package-lock.json
+.prettierrc
+*config*

@@ -1,0 +1,53 @@
+.footer {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 64px;
+  gap: 32px;
+  grid-template-areas:
+    'logo logo logo logo logo logo nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    '. . . . . . nav nav nav nav nav nav'
+    'c c c c c c . . . . . . ';
+  background-color: var(--primary-black);
+  color: white;
+
+  &Logo {
+    display: flex;
+    grid-area: logo;
+    align-items: center;
+
+    &Name {
+      color: white;
+      font-size: 34px;
+    }
+  }
+
+  @media screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'logo'
+      'nav'
+      'c';
+    padding: 12px;
+  }
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 0;
+  gap: 32px;
+  grid-area: nav;
+
+  @media screen and (max-width: 800px) {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.cp {
+  color: white;
+  grid-area: c;
+}

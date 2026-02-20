@@ -1,0 +1,16 @@
+export { Header } from './Header/Header';
+export { Footer } from './Footer/Footer';
+export { TicketForm } from './TicketForm/TicketForm';
+export { Banner } from './Banner/Banner';
+export { TrainCard } from './TrainCard/TrainCard';
+export { PassengerCard } from './PassengerCard/PassengerCard';
+export { OfferCard } from './OfferCard/OfferCard';
+export { FoodCard } from './FoodCard/FoodCard';
+export { OffersList } from './OffersList/OffersList';
+export { OfferAndBaggage } from './OfferAndBaggage/OfferAndBaggage';
+export { BillDetails } from './BillDetails/BillDetails';
+export { PaymentMethods } from './PaymentMethods/PaymentMethods';
+export { Offers } from './Offers/Offers';
+export { PassengerForm } from './PassengerForm/PassengerForm';
+export { SuccessDetails } from './SuccessDetails/SuccessDetails';
+export { TrainInfo } from './TrainInfo/TrainInfo';

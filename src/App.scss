@@ -1,0 +1,27 @@
+.ant-card-type-inner .ant-card-body {
+  padding: var(--ant-padding) 0;
+}
+
+.ant-input-number-action-down {
+  border-inline-end: none !important;
+  padding: 0 !important;
+}
+
+.ant-input-number-action-up {
+  border-inline-start: none !important;
+  padding: 0 !important;
+}
+.ant-input-number-input {
+  width: 45px !important;
+}
+
+@media screen and (max-width: 800px) {
+  .ant-radio-label {
+    font-size: 12px;
+  }
+
+  .ant-input-number-input {
+    width: 40px !important;
+    padding: 0 !important;
+  }
+}

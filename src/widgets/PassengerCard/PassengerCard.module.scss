@@ -1,0 +1,38 @@
+.card {
+  border-color: var(--primary-black-50);
+  border-radius: 10px;
+  gap: 32px;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 16px;
+
+  @media screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input {
+  height: 56px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--lighter-grey);
+}
+
+.foods-wrapper {
+  flex-direction: column;
+
+  @media screen and (max-width: 800px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
+}
+
+.view-more {
+  @media screen and (max-width: 800px) {
+    font-size: 14px;
+  }
+}

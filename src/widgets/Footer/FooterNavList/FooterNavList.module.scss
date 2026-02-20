@@ -1,0 +1,11 @@
+.list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.heading {
+  color: white !important;
+  font-weight: bold;
+}

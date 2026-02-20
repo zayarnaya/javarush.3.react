@@ -1,0 +1,76 @@
+.form-wrapper {
+  gap: 34px;
+  @media screen and (max-width: 800px) {
+    width: 100%;
+    gap: 12px;
+  }
+}
+
+.form {
+  width: 640px;
+
+  @media screen and (max-width: 800px) {
+    width: 100%;
+  }
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 600;
+
+  &.white {
+    color: white !important;
+  }
+}
+
+.type-wrapper {
+  background-color: white;
+  border-radius: 10px;
+  height: 34px;
+  overflow: visible;
+  justify-content: space-between;
+  padding: 0 32px;
+
+  @media screen and (max-width: 800px) {
+    padding: 0 12px;
+  }
+}
+
+.station-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 34px;
+
+  @media screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+.date-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.datePicker {
+  width: 100%;
+}
+
+.with-person {
+  // width: 118px !important;
+  position: relative;
+  margin-left: 25px;
+  transform: translateY(3px);
+
+  @media screen and (max-width: 800px) {
+    font-size: 12px;
+  }
+
+  &::before {
+    content: url('../../assets/images/person.svg');
+    position: absolute;
+    top: 64%;
+    left: -25px;
+    transform: translateY(-50%);
+  }
+}

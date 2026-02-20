@@ -1,0 +1,59 @@
+@use 'assets/styles/fonts';
+
+:root {
+  --breakpoint-l: 1440px;
+  --breakpoint-touch: 1200px;
+  --breakpoint-m: 768px;
+  --breakpoint-s: 360px;
+
+  --primary-blue: #5e4ae3;
+  /**/
+  --primary-blue-10: #5e4ae325;
+  --primary-red: #ff6060;
+  /**/
+  --primary-black: #010400;
+  --primary-black-50: #01040088;
+  /**/
+  --secondary-black: #202020;
+  --teal: #7dcfb6;
+  --light-orange: #fbd1a2;
+  --orange: #f79256;
+  --bg-grey: #f5f5f5;
+  --primary-grey: #90a3bf;
+  --darker-grey: #90a3bf7f;
+  --lighter-grey: #f5f5f5;
+  --success-green: #31a91d;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  color: var(--primary-black);
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  min-width: 360px;
+  background-color: var(--bg-grey);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100vw;
+  min-height: 100vh;
+}
+
+span {
+  color: inherit;
+}
+
+h2 {
+  font-weight: 400;
+}

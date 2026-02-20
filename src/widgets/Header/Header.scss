@@ -1,0 +1,135 @@
+.header {
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 32px 64px;
+
+  @media screen and (max-width: 800px) {
+    padding: 12px;
+  }
+
+  &__dark {
+    background-color: var(--primary-black);
+    color: white;
+  }
+
+  &__hamburger {
+    display: none;
+
+    @media screen and (max-width: 1199px) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &__toggler {
+    border: none;
+    background-color: transparent;
+    border-radius: 3px;
+    width: 30px;
+    height: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 2px 0;
+
+    .line1,
+    .line2,
+    .line3 {
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary-black);
+    }
+
+    .line2 {
+      width: 16px;
+    }
+
+    &.active {
+      .line1 {
+        transform: rotate(45deg) translateY(9px) translateX(3px);
+      }
+      .line2 {
+        display: none;
+      }
+      .line3 {
+        transform: rotate(-45deg) translateY(-3px) translateX(-3px);
+      }
+    }
+  }
+
+  &__nav {
+    display: flex;
+    min-width: 50%;
+    justify-content: space-between;
+    color: inherit;
+    transition: left ease 0.5s;
+
+    @media screen and (max-width: 800px) {
+      flex-direction: column;
+      gap: 32px;
+      padding: 12px !important;
+    }
+
+    &.active {
+      left: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      @media screen and (max-width: 800px) {
+        color: white;
+        font-size: 32px;
+      }
+    }
+
+    @media screen and (max-width: 1199px) {
+      width: 100vw;
+      height: calc(100vh - 76px);
+      background-color: var(--primary-black);
+      position: fixed;
+      top: 76px;
+      left: -100%;
+      padding: calc(4 * var(--layout-margin)) var(--layout-gutter);
+      justify-content: flex-start;
+    }
+
+    &-link {
+      font-size: 20px;
+      line-height: 26px;
+      text-decoration: none;
+
+      @media screen and (max-width: 1199px) {
+        font-size: 48px;
+        color: white;
+      }
+
+      @media screen and (max-width: 1199px) {
+        font-size: 32px;
+      }
+    }
+  }
+
+  .logo,
+  .logo__name {
+    color: inherit;
+  }
+
+  .logo__name {
+    font-size: 34px;
+
+    @media screen and (max-width: 800px) {
+      display: none;
+    }
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}

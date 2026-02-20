@@ -1,0 +1,21 @@
+.wrapper {
+  color: white;
+  width: 840px;
+  margin: 0 auto;
+
+  @media screen and (max-width: 800px) {
+    padding: 32px 20px 100px 20px;
+    width: 100vw;
+  }
+}
+
+.h1 {
+  color: white !important;
+  text-align: center;
+}
+
+.p {
+  color: white !important;
+  margin-bottom: 64px;
+  text-align: center;
+}

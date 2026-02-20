@@ -1,0 +1,19 @@
+.info {
+  padding-left: 30px;
+  position: relative;
+
+  &::before {
+    display: block;
+    content: '';
+    width: 20px;
+    height: 20px;
+    background-image: url('../../assets/images/discount.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
