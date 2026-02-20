@@ -1,5 +1,5 @@
 import { useCallback, useState, type FC } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import cn from 'classnames';
 import logo from '@images/logo.svg';
 import logoWhite from '@images/logo-white.svg';
@@ -13,10 +13,11 @@ interface Props {
 export const Header: FC<Props> = ({ darkTheme = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleMenuToggle = useCallback(() => setIsOpen((prev) => !prev), []);
+  const navigate = useNavigate();
 
   return (
     <header className={cn('header', darkTheme && 'header__dark')}>
-      <div className="logo">
+      <div className={cn('logo', !darkTheme && 'active')} onClick={darkTheme ? undefined : () => navigate('/')}>
         <img className="logo__image" alt="Railway" src={darkTheme ? logoWhite : logo} width="74" />
         <span className="logo__name">Railway</span>
       </div>

@@ -3,15 +3,21 @@ import logo from '@images/logo-white.svg';
 import style from './Footer.module.scss';
 import { navListItems } from './consts/navlistitems';
 import { FooterNavList } from './FooterNavList/FooterNavList';
+import cn from 'classnames';
+import { useNavigate } from 'react-router';
 
 interface Props {
   isMainPage?: boolean;
 }
 
 export const Footer: FC<Props> = ({ isMainPage = false }) => {
+  const navigate = useNavigate();
   return isMainPage ? null : (
     <footer className={style.footer}>
-      <div className={style.footerLogo}>
+      <div
+        className={cn(style.footerLogo, !isMainPage && style.active)}
+        onClick={isMainPage ? undefined : () => navigate('/')}
+      >
         <img src={logo} alt="" className={style.image} />
         <span className={style.footerLogoName}>Railway</span>
       </div>

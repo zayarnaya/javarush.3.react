@@ -1,73 +1,26 @@
-# React + TypeScript + Vite
+# Проект по React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Вероника Заярная
 
-Currently, two official plugins are available:
+### Установка
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Установить зависимости командой `npm install`, запустить проект командой `npm run dev`
 
-## React Compiler
+### Посмотреть проект
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Демо проекта [тут](https://zayarnaya.github.io/javarush.3.react/)
+К сожалению, заход по ссылкам на внутренние страницы не работает, надо от корня идти
 
-## Expanding the ESLint configuration
+### Декоративные (нерабочие) куски
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- runs on: есть только одна опция
+- food -> view more: остальные опции не открываются, в мобильной версии в т.ч.
+- внутренние ссылки, кроме перехода на существующие страницы, переходят в корень или являются чисто декоративными
+- оплата: для имитации оплаты надо заполнить поля у формы карты либо перейти в другие методы и нажать кнопку "оплатить"
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Рабочие куски
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- формы: работают, валидация работает
+- куар: генерит ссылку на страницу успеха
+- пдф: генерит пдф с содержимым верхней карточки страницы успеха
+- переход по прямой ссылке с query-параметрами (только в дев режиме)
