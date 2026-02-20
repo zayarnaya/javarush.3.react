@@ -61,7 +61,7 @@ export const TicketFormContextProvider: FC<WithChildren> = ({ children }) => {
     try {
       const search = Object.fromEntries(searchParams.entries());
       //@ts-expect-error
-      search.date = search.date.split(',').map(Number);
+      search.date = search.date ? search.date.split(',').map(Number) : null;
       updateAllState(search);
     } catch (error) {
       console.error(error);

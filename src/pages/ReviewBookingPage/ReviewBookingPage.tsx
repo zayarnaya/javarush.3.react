@@ -57,7 +57,7 @@ export const ReviewBookingPage = () => {
 
   const handleBooking = useCallback(async () => {
     if (!train || !classCode) {
-      console.log(
+      console.error(
         'ОШИБКА С ДАННЫМИ',
         JSON.stringify({ train, classCode, passengers, extraBaggage, baseAmount, totalDiscount, totalFood, totalSum }),
       );

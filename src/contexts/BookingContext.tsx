@@ -106,8 +106,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
     let totalFood = 0;
     let totalDiscount = 0;
 
-    console.log(JSON.stringify({ train, classCode, code, extraBaggage }));
-
     if (train && classCode) {
       baseAmount = getBasePrice(train, classCode, passengers?.length ?? 1);
       setBaseAmount(baseAmount);
@@ -131,7 +129,6 @@ export const BookingContextProvider: FC<WithChildren> = ({ children }) => {
 
     const totalSum = total - totalDiscount;
     setTotalSum(totalSum);
-    console.log(JSON.stringify({ baseAmount, totalDiscount, totalFood, totalSum }));
   };
 
   const updateState = ({ key, values }: BookingContextStateEntry) => {

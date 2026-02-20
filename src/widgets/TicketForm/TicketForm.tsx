@@ -39,7 +39,6 @@ export const TicketForm: FC<Props> = ({ handleSubmit, isSearch = false }) => {
     state: { type, passengers, departure, arrival, date },
     updateState,
   } = useContext(TicketFormContext);
-  console.log(JSON.stringify({ type, passengers, departure, arrival, date }));
 
   const [departureList, setDepartureList] = useState<typeof stationList>([]);
   const [arrivalList, setArrivalList] = useState<typeof stationList>([]);

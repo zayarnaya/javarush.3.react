@@ -28,7 +28,7 @@ export const SearchResultsPage = () => {
     (searchString: string) => {
       const newSearchParams = new URLSearchParams(searchString);
       setSearchParams(newSearchParams, { replace: true });
-      fetchTrains(departure ?? '', arrival ?? '');
+      fetchTrains(newSearchParams.get('departure') ?? '', newSearchParams.get('arrival') ?? '');
     },
     [searchParams],
   );
