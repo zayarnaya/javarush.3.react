@@ -1,14 +1,21 @@
 import { Form, Input } from 'antd';
 import type { FC } from 'react';
 import MaskedInput from 'antd-mask-input';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import style from './styles.module.scss';
 
 export const PaymentMethodForm: FC<{ form: any }> = ({ form }: { form: any }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   return (
-    <Form form={form} requiredMark={false} id="card" onFinish={() => navigate('/success')}>
+    <Form
+      form={form}
+      requiredMark={false}
+      id="card"
+      onFinish={() => navigate({ pathname: '/success', search: searchParams.toString() })}
+      onFinishFailed={(all: any) => console.log(JSON.stringify(all))}
+    >
       <div className={style.grid}>
         <Form.Item
           layout="vertical"

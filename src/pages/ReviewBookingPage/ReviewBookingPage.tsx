@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Form, Typography } from 'antd';
+import { Card, Flex, Form, Typography } from 'antd';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useBooking } from 'src/api/mockApi';
@@ -10,9 +10,9 @@ import { TicketFormContext } from 'src/contexts';
 import { BillDetails, PassengerForm } from 'src/widgets';
 import { BoardingDetails } from 'src/widgets/BoardingDetails/BoardingDetails';
 import { Offers } from 'src/widgets/Offers/Offers';
-import { Disclamers } from 'src/components';
+import { BookButtons } from 'src/widgets/BookButtons/BookButtons';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export const ReviewBookingPage = () => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ export const ReviewBookingPage = () => {
     },
   } = useContext(BookingContext);
 
-  const { loading: bookingLoading, error, book } = useBooking();
+  const { loading: bookLoading, error, book } = useBooking();
 
   const [bookingFormError, setBookingFormError] = useState(false);
 
@@ -93,8 +93,6 @@ export const ReviewBookingPage = () => {
         <BoardingDetails loading={trainLoading} showClass />
 
         <PassengerForm form={form} onFinish={handleBooking} onFinishFailed={() => setBookingFormError(true)} />
-        {/* {passengers &&
-          passengers.map((passenger) => <PassengerCard id={passenger.id} key={`passenger__${passenger.id}`} />)} */}
 
         <Offers />
 
@@ -106,44 +104,18 @@ export const ReviewBookingPage = () => {
           style={{ backgroundColor: 'transparent', boxShadow: 'none', padding: 0 }}
         >
           <Flex vertical align="center" gap={16}>
-            <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
-            <Button
-              style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
-              type="primary"
-              variant="solid"
-              // onClick={handleBooking}
-              onClick={() => form.submit()}
-              loading={bookingLoading}
-              htmlType="button"
-            >
-              Book Now
-            </Button>
-            <Button
-              style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
-              variant="outlined"
-              color="danger"
-              onClick={() =>
+            <BookButtons
+              onConfirm={() => form.submit()}
+              onCancel={() =>
                 navigate({
                   pathname: '/search-results',
                   search: mapFormData({ type, passengers: passengersNo, departure, arrival, date, trainId }),
                 })
               }
-            >
-              Cancel
-            </Button>
-            <Flex justify="center" style={{ height: '60px', display: 'flex' }}>
-              {bookingFormError && (
-                <Text type="danger" style={{ transition: 'all ease .5s' }}>
-                  Fill out Passenger Data, please!
-                </Text>
-              )}
-              {error && (
-                <Text type="danger" style={{ transition: 'all ease .5s' }}>
-                  Some error occured during booking, try again later!
-                </Text>
-              )}
-            </Flex>
-            <Disclamers />
+              withError
+              error={!!error}
+              bookingError={bookingFormError}
+            />
           </Flex>
         </Card>
       </Flex>

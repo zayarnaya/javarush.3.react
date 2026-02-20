@@ -1,5 +1,5 @@
-import { Button, Flex, Form, Typography } from 'antd';
-import { useContext, useEffect, useState, type FC } from 'react';
+import { Flex, Form, Typography } from 'antd';
+import { useCallback, useContext, useEffect, useState, type FC } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useFetchPaymentDetails } from 'src/api/mockApi';
 import { BookingContext } from 'src/contexts';
@@ -12,9 +12,9 @@ import { BillDetails, PaymentMethods } from 'src/widgets';
 
 import shield from '@images/save.svg';
 import { Offers } from 'src/widgets/Offers/Offers';
-import { Disclamers } from 'src/components';
+import { BookButtons } from 'src/widgets/BookButtons/BookButtons';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export const PaymentPage: FC = () => {
   const [searchParams] = useSearchParams();
@@ -49,6 +49,10 @@ export const PaymentPage: FC = () => {
 
   const [form] = Form.useForm();
 
+  const handleSubmit = useCallback(() => {
+    activeMethod === '1' ? form.submit() : toSuccessPage();
+  }, [activeMethod, form]);
+
   return (
     <PageLayout>
       <Flex vertical gap={32} className={style.wrapper}>
@@ -71,24 +75,7 @@ export const PaymentPage: FC = () => {
             <img src={shield} width={32} alt="" />
             <span>All your data are safe</span>
           </Flex>
-          <Text type="secondary">Discounts, offers and price concessions will be applied later during payment</Text>
-          <Button
-            style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
-            type="primary"
-            variant="solid"
-            onClick={activeMethod === '1' ? form.submit : toSuccessPage}
-          >
-            Book Now
-          </Button>
-          <Button
-            style={{ width: '100%', maxWidth: '400px', padding: '16px 0', height: '56px' }}
-            variant="outlined"
-            color="danger"
-            onClick={() => navigate('/')}
-          >
-            Cancel
-          </Button>
-          <Disclamers />
+          <BookButtons onConfirm={handleSubmit} onCancel={() => navigate('/')} />
         </Flex>
       </Flex>
     </PageLayout>
