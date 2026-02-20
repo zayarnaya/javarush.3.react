@@ -50,7 +50,7 @@ export const SuccessPage = () => {
       </Flex>
       <SuccessDetails ref={pdfRef} loading={loading} />
       <StyledCard className={style.card}>
-        <Flex justify="space-between" align="center" gap={32}>
+        <Flex justify="space-between" align="center" gap={32} className={style.wrapper}>
           <QRCode value={location.href} size={220} />
           <Flex vertical gap={16} className={style.buttons}>
             <StyledButton type="primary" className={style.button} onClick={() => navigate('/')}>
